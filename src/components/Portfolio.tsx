@@ -1,7 +1,14 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ExternalLink } from 'lucide-react';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ExternalLink } from "lucide-react";
+
+import service1 from "../assets/service4.png";
+import portfolio2 from "../assets/portfolio2.png";
+import portfolio3 from "../assets/portfolio3.png";
+import portfolio4 from "../assets/portfolio4.png";
+import portfolio5 from "../assets/portfolio5.png";
+import portfolio6 from "../assets/portfolio6.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,58 +17,48 @@ const Portfolio = () => {
   const projectsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from('.portfolio-item', {
-        scale: 0.8,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: projectsRef.current,
-          start: 'top 80%',
-        },
-      });
-    }, sectionRef);
+    const ctx = gsap.context(() => {}, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   const projects = [
     {
-      title: 'E-commerce Platform',
-      category: 'Web Development',
-      description: 'A comprehensive online shopping solution with advanced features',
-      color: 'from-blue-400 to-blue-600',
+      title: "E-commerce Platform",
+      category: "Web Development",
+      description:
+        "A comprehensive online shopping solution with advanced features",
+      image: service1,
     },
     {
-      title: 'Healthcare App',
-      category: 'Mobile Development',
-      description: 'Patient management and telemedicine platform',
-      color: 'from-teal-400 to-cyan-600',
+      title: "Healthcare App",
+      category: "Mobile Development",
+      description: "Patient management and telemedicine platform",
+      image: portfolio2,
     },
     {
-      title: 'Financial Dashboard',
-      category: 'Web Application',
-      description: 'Real-time analytics and reporting system',
-      color: 'from-slate-400 to-slate-600',
+      title: "Financial Dashboard",
+      category: "Web Application",
+      description: "Real-time analytics and reporting system",
+      image: portfolio3,
     },
     {
-      title: 'Social Media Platform',
-      category: 'Full Stack',
-      description: 'Community-driven content sharing application',
-      color: 'from-orange-400 to-red-500',
+      title: "Social Media Platform",
+      category: "Full Stack",
+      description: "Community-driven content sharing application",
+      image: portfolio4,
     },
     {
-      title: 'Educational Portal',
-      category: 'Web Development',
-      description: 'Online learning management system',
-      color: 'from-green-400 to-emerald-600',
+      title: "Educational Portal",
+      category: "Web Development",
+      description: "Online learning management system",
+      image: portfolio5,
     },
     {
-      title: 'Food Delivery App',
-      category: 'Mobile Development',
-      description: 'On-demand food ordering and delivery solution',
-      color: 'from-pink-400 to-rose-600',
+      title: "Food Delivery App",
+      category: "Mobile Development",
+      description: "On-demand food ordering and delivery solution",
+      image: portfolio6,
     },
   ];
 
@@ -69,7 +66,7 @@ const Portfolio = () => {
     <section id="portfolio" ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-[#B8872F] mb-4">
             Our Portfolio
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto">
@@ -88,8 +85,12 @@ const Portfolio = () => {
               className="portfolio-item group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
             >
               <div
-                className={`aspect-[4/3] bg-gradient-to-br ${project.color} flex items-center justify-center relative`}
+                className="aspect-[4/3] bg-contain bg-center bg-no-repeat flex items-center justify-center relative"
+                style={{
+                  backgroundImage: `url(${project.image})`,
+                }}
               >
+                <div className="absolute inset-0 bg-black/20 backdrop-blur-xs group-hover:backdrop-blur-xs transition-all duration-300" />
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all"></div>
                 <div className="relative z-10 text-white text-center p-6">
                   <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">

@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Quote } from 'lucide-react';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Quote } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,52 +10,41 @@ const Testimonials = () => {
   const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from('.testimonial-card', {
-        y: 80,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: 'top 80%',
-        },
-      });
-    }, sectionRef);
+    const ctx = gsap.context(() => {}, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   const testimonials = [
     {
-      name: 'Rohit Verma',
-      company: 'TechStart Solutions',
-      role: 'CEO',
-      text: 'Dreamers Softtech delivered exceptional results. Their team understood our vision and transformed it into a powerful digital solution. Highly recommended!',
+      name: "Rohit Verma",
+      company: "TechStart Solutions",
+      role: "CEO",
+      text: "Dreamers Softtech delivered exceptional results. Their team understood our vision and transformed it into a powerful digital solution. Highly recommended!",
     },
     {
-      name: 'Anjali Mehta',
-      company: 'E-Commerce Pro',
-      role: 'Founder',
-      text: 'Outstanding work! They built our e-commerce platform from scratch and it exceeded all expectations. Professional, timely, and innovative.',
+      name: "Anjali Mehta",
+      company: "E-Commerce Pro",
+      role: "Founder",
+      text: "Outstanding work! They built our e-commerce platform from scratch and it exceeded all expectations. Professional, timely, and innovative.",
     },
     {
-      name: 'Karan Desai',
-      company: 'HealthCare Plus',
-      role: 'Product Manager',
-      text: 'The mobile app they developed has transformed our patient engagement. Their attention to detail and commitment to quality is unmatched.',
+      name: "Karan Desai",
+      company: "HealthCare Plus",
+      role: "Product Manager",
+      text: "The mobile app they developed has transformed our patient engagement. Their attention to detail and commitment to quality is unmatched.",
     },
     {
-      name: 'Neha Kapoor',
-      company: 'FinTech Innovations',
-      role: 'CTO',
-      text: 'Working with Dreamers Softtech was a game-changer for us. Their technical expertise and problem-solving abilities are top-notch.',
+      name: "Neha Kapoor",
+      company: "FinTech Innovations",
+      role: "CTO",
+      text: "Working with Dreamers Softtech was a game-changer for us. Their technical expertise and problem-solving abilities are top-notch.",
     },
     {
-      name: 'Siddharth Rao',
-      company: 'Digital Marketing Hub',
-      role: 'Director',
-      text: 'They delivered our project on time and within budget. The team was responsive, skilled, and a pleasure to work with throughout the process.',
+      name: "Siddharth Rao",
+      company: "Digital Marketing Hub",
+      role: "Director",
+      text: "They delivered our project on time and within budget. The team was responsive, skilled, and a pleasure to work with throughout the process.",
     },
   ];
 
@@ -75,7 +64,10 @@ const Testimonials = () => {
           </p>
         </div>
 
-        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+          ref={cardsRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
@@ -91,8 +83,12 @@ const Testimonials = () => {
                 <div className="font-bold text-slate-900 text-lg">
                   {testimonial.name}
                 </div>
-                <div className="text-blue-600 font-medium">{testimonial.role}</div>
-                <div className="text-sm text-slate-500">{testimonial.company}</div>
+                <div className="text-blue-600 font-medium">
+                  {testimonial.role}
+                </div>
+                <div className="text-sm text-slate-500">
+                  {testimonial.company}
+                </div>
               </div>
             </div>
           ))}

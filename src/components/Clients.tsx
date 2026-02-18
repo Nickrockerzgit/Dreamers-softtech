@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -9,34 +9,24 @@ const Clients = () => {
   const logosRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from('.client-logo', {
-        scale: 0,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: 'back.out(1.7)',
-        scrollTrigger: {
-          trigger: logosRef.current,
-          start: 'top 80%',
-        },
-      });
-    }, sectionRef);
+    if (!logosRef.current) return;
+
+    const ctx = gsap.context(() => {}, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   const clients = [
-    'TechCorp',
-    'InnovateLabs',
-    'CloudSync',
-    'DataFlow',
-    'MobileFirst',
-    'WebMasters',
-    'CodeVision',
-    'DigitalHub',
-    'SmartSolutions',
-    'FutureTech',
+    "TechCorp",
+    "InnovateLabs",
+    "CloudSync",
+    "DataFlow",
+    "MobileFirst",
+    "WebMasters",
+    "CodeVision",
+    "DigitalHub",
+    "SmartSolutions",
+    "FutureTech",
   ];
 
   return (
@@ -46,16 +36,18 @@ const Clients = () => {
       className="py-20 bg-gradient-to-br from-slate-50 to-blue-50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
             Our Clients
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Trusted by global brands and startups for innovative technology solutions
-            and lasting partnerships
+            Trusted by global brands and startups for innovative technology
+            solutions and long-term partnerships
           </p>
         </div>
 
+        {/* Client logos */}
         <div
           ref={logosRef}
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8"
