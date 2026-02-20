@@ -1,28 +1,23 @@
-import Header from './components/Header';
-import Hero from './components/Hero';
-import About from './components/About';
-import Services from './components/Services';
-import Portfolio from './components/Portfolio';
-import Clients from './components/Clients';
-import Team from './components/Team';
-import Testimonials from './components/Testimonials';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/common/Header";
+import Footer from "./components/common/Footer";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import ScrollToTop from "./components/home/ScrollToTop";
 
 function App() {
   return (
-    <div className="min-h-screen">
+    <BrowserRouter>
+      <ScrollToTop />
       <Header />
-      <Hero />
-      <About />
-      <Services />
-      <Portfolio />
-      <Clients />
-      <Team />
-      <Testimonials />
-      <Contact />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+
       <Footer />
-    </div>
+    </BrowserRouter>
   );
 }
 

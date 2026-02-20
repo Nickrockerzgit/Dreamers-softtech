@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import aboutBg from "../assets/about-bg.png";
-import aboutBg2 from "../assets/about-bg2.png";
+import aboutBg from "../../assets/about-bg.png";
+import aboutBg2 from "../../assets/about-bg2.png";
 
 gsap.registerPlugin(ScrollTrigger);
 

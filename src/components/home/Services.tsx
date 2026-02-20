@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import servicesBg from "../assets/about-bg2.png";
+import servicesBg from "../../assets/about-bg2.png";
 
-import service1 from "../assets/service1.png";
-import service2 from "../assets/service2.png";
-import service3 from "../assets/service3.png";
-import service4 from "../assets/service4.png";
-import service5 from "../assets/service5.png";
+import service1 from "../../assets/service1.png";
+import service2 from "../../assets/service2.png";
+import service3 from "../../assets/service3.png";
+import service4 from "../../assets/service4.png";
+import service5 from "../../assets/service5.png";
 
 const services = [
   {

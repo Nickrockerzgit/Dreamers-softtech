@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,8 +15,8 @@ const Header = () => {
   }, []);
 
   const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
     { name: "Services", href: "#services" },
     { name: "Portfolio", href: "#portfolio" },
     { name: "Contact", href: "#contact" },
@@ -40,9 +41,9 @@ const Header = () => {
 
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                to={link.href}
                 className={`text-sm font-medium transition-colors ${
                   isScrolled
                     ? "text-slate-700 hover:text-[#C89A3D]"
@@ -50,14 +51,14 @@ const Header = () => {
                 }`}
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
-            <a
-              href="#contact"
+            <Link
+              to="#contact"
               className="px-6 py-2.5 bg-[#C89A3D] text-white rounded-lg hover:hover:bg-[#B8872F] transition-colors font-medium"
             >
               Contact Us
-            </a>
+            </Link>
           </div>
 
           <button
@@ -74,22 +75,22 @@ const Header = () => {
           <div className="md:hidden bg-white border-t border-slate-200">
             <div className="px-4 py-6 space-y-4">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
-                  href={link.href}
+                  to={link.href}
                   className="block text-slate-700 hover:text-[#C89A3D] font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}
-                </a>
+                </Link>
               ))}
-              <a
-                href="#contact"
+              <Link
+                to="#contact"
                 className="block w-full px-6 py-2.5 bg-[#C89A3D] text-white rounded-lg hover:bg-[#B8872F] text-center font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Contact Us
-              </a>
+              </Link>
             </div>
           </div>
         )}

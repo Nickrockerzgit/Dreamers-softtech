@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ArrowRight } from "lucide-react";
-import heroBg from "../assets/her02-bg.png";
+import heroBg from "../../assets/her02-bg.png";
 
 const Hero = () => {
   const heroRef = useRef<HTMLDivElement>(null);
