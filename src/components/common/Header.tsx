@@ -54,7 +54,7 @@ const Header = () => {
               </Link>
             ))}
             <Link
-              to="#contact"
+              to="/contact"
               className="px-6 py-2.5 bg-[#C89A3D] text-white rounded-lg hover:hover:bg-[#B8872F] transition-colors font-medium"
             >
               Contact Us

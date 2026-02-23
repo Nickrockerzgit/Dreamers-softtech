@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Linkedin, Github, Twitter } from 'lucide-react';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Linkedin, Github, Twitter } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,14 +11,14 @@ const Team = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from('.team-member', {
+      gsap.from(".team-member", {
         y: 100,
         opacity: 0,
         duration: 0.8,
         stagger: 0.15,
         scrollTrigger: {
           trigger: membersRef.current,
-          start: 'top 80%',
+          start: "top 80%",
         },
       });
     }, sectionRef);
@@ -28,29 +28,29 @@ const Team = () => {
 
   const team = [
     {
-      name: 'Rajesh Kumar',
-      role: 'CEO & Founder',
-      bio: 'Visionary leader with 10+ years in tech',
+      name: "Rajesh Kumar",
+      role: "CEO & Founder",
+      bio: "Visionary leader with 10+ years in tech",
     },
     {
-      name: 'Priya Sharma',
-      role: 'CTO',
-      bio: 'Tech innovator and architecture expert',
+      name: "Priya Sharma",
+      role: "CTO",
+      bio: "Tech innovator and architecture expert",
     },
     {
-      name: 'Amit Patel',
-      role: 'Lead Developer',
-      bio: 'Full-stack wizard with passion for code',
+      name: "Amit Patel",
+      role: "Lead Developer",
+      bio: "Full-stack wizard with passion for code",
     },
     {
-      name: 'Sneha Gupta',
-      role: 'UX/UI Designer',
-      bio: 'Creative mind behind beautiful interfaces',
+      name: "Sneha Gupta",
+      role: "UX/UI Designer",
+      bio: "Creative mind behind beautiful interfaces",
     },
     {
-      name: 'Vikram Singh',
-      role: 'Project Manager',
-      bio: 'Orchestrating success, one project at a time',
+      name: "Vikram Singh",
+      role: "Project Manager",
+      bio: "Orchestrating success, one project at a time",
     },
   ];
 
@@ -71,38 +71,40 @@ const Team = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8"
         >
           {team.map((member, index) => (
-            <div
-              key={index}
-              className="team-member group text-center"
-            >
+            <div key={index} className="team-member group text-center">
               <div className="relative mb-6">
                 <div className="w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-blue-400 to-slate-600 flex items-center justify-center text-white text-4xl font-bold shadow-xl group-hover:shadow-2xl transition-all group-hover:scale-105">
-                  {member.name.split(' ').map(n => n[0]).join('')}
+                  {member.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
                 </div>
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">
                 {member.name}
               </h3>
-              <div className="text-blue-600 font-medium mb-3">{member.role}</div>
+              <div className="text-[#C89A3D] font-medium mb-3">
+                {member.role}
+              </div>
               <p className="text-sm text-slate-600 mb-4">{member.bio}</p>
               <div className="flex justify-center gap-3">
                 <a
                   href="#"
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-blue-600 flex items-center justify-center transition-colors group"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-[#C89A3D] flex items-center justify-center transition-colors group"
                 >
-                  <Linkedin size={16} className="text-slate-600 group-hover:text-white" />
+                  <Linkedin size={16} className="text-slate-600" />
                 </a>
                 <a
                   href="#"
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-blue-600 flex items-center justify-center transition-colors group"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-[#C89A3D] flex items-center justify-center transition-colors group"
                 >
-                  <Github size={16} className="text-slate-600 group-hover:text-white" />
+                  <Github size={16} className="text-slate-600 " />
                 </a>
                 <a
                   href="#"
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-blue-600 flex items-center justify-center transition-colors group"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-[#C89A3D] flex items-center justify-center transition-colors group"
                 >
-                  <Twitter size={16} className="text-slate-600 group-hover:text-white" />
+                  <Twitter size={16} className="text-slate-600" />
                 </a>
               </div>
             </div>

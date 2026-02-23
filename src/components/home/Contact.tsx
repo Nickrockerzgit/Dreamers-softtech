@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,10 +11,10 @@ const Contact = () => {
   const infoRef = useRef<HTMLDivElement>(null);
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
   });
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Contact = () => {
         duration: 1,
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 80%',
+          start: "top 80%",
         },
       });
 
@@ -35,7 +35,7 @@ const Contact = () => {
         duration: 1,
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 80%',
+          start: "top 80%",
         },
       });
     }, sectionRef);
@@ -45,11 +45,11 @@ const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Form submitted! (Backend integration pending)');
+    alert("Form submitted! (Backend integration pending)");
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({
       ...formData,
@@ -58,19 +58,15 @@ const Contact = () => {
   };
 
   return (
-    <section
-      id="contact"
-      ref={sectionRef}
-      className="py-20 bg-white"
-    >
+    <section id="contact" ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
             Get in Touch with Us!
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Let's discuss how we can help transform your business with innovative
-            digital solutions
+            Let's discuss how we can help transform your business with
+            innovative digital solutions
           </p>
         </div>
 
@@ -91,7 +87,7 @@ const Contact = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 border border-slate-300 text-slate-700 rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent outline-none transition"
                   placeholder="John Doe"
                 />
               </div>
@@ -110,7 +106,7 @@ const Contact = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 border border-slate-300 text-slate-700 rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent outline-none transition"
                   placeholder="john@example.com"
                 />
               </div>
@@ -128,7 +124,7 @@ const Contact = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 border border-slate-300 text-slate-700 rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent outline-none transition"
                   placeholder="+91 98765 43210"
                 />
               </div>
@@ -147,17 +143,20 @@ const Contact = () => {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition resize-none"
+                  className="w-full px-4 py-3 border border-slate-300 text-slate-700 rounded-lg focus:ring-2 focus:ring-slate-700 focus:border-transparent outline-none transition resize-none"
                   placeholder="Tell us about your project..."
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold flex items-center justify-center gap-2 group"
+                className="w-full bg-[#C89A3D] text-white py-4 rounded-lg hover:bg-[#B8872F]  transition-colors font-semibold flex items-center justify-center gap-2 group"
               >
                 Send Message
-                <Send size={20} className="group-hover:translate-x-1 transition-transform" />
+                <Send
+                  size={20}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </button>
             </form>
           </div>
@@ -170,14 +169,16 @@ const Contact = () => {
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-[#C89A3D] rounded-lg flex items-center justify-center flex-shrink-0">
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <div className="font-semibold text-slate-900 mb-1">Email</div>
+                    <div className="font-semibold text-slate-900 mb-1">
+                      Email
+                    </div>
                     <a
                       href="mailto:info@dreamerssofttech.com"
-                      className="text-slate-600 hover:text-blue-600 transition"
+                      className="text-slate-600 hover:text-[#C89A3D] transition"
                     >
                       info@dreamerssofttech.com
                     </a>
@@ -185,14 +186,16 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-[#C89A3D] rounded-lg flex items-center justify-center flex-shrink-0">
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <div className="font-semibold text-slate-900 mb-1">Phone</div>
+                    <div className="font-semibold text-slate-900 mb-1">
+                      Phone
+                    </div>
                     <a
                       href="tel:+919876543210"
-                      className="text-slate-600 hover:text-blue-600 transition"
+                      className="text-slate-600 hover:text-[#C89A3D] transition"
                     >
                       +91 98765 43210
                     </a>
@@ -200,11 +203,13 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-[#C89A3D] rounded-lg flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <div className="font-semibold text-slate-900 mb-1">Address</div>
+                    <div className="font-semibold text-slate-900 mb-1">
+                      Address
+                    </div>
                     <p className="text-slate-600">
                       123 Tech Park, Cyber City
                       <br />

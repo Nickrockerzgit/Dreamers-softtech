@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Linkedin, Instagram, Mail } from 'lucide-react';
+import { Facebook, Twitter, Linkedin, Instagram, Mail } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -10,31 +10,31 @@ const Footer = () => {
           <div>
             <h3 className="text-2xl font-bold mb-4">Dreamers Softtech LLP</h3>
             <p className="text-slate-400 mb-4">
-              Transforming ideas into powerful digital solutions that drive business
-              growth and innovation.
+              Transforming ideas into powerful digital solutions that drive
+              business growth and innovation.
             </p>
             <div className="flex gap-3">
               <a
                 href="#"
-                className="w-10 h-10 bg-slate-800 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+                className="w-10 h-10 bg-slate-800 rounded-lg hover:bg-[#C89A3D] transition-colors flex items-center justify-center"
               >
                 <Facebook size={20} />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-slate-800 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+                className="w-10 h-10 bg-slate-800 rounded-lg hover:bg-[#C89A3D] transition-colors flex items-center justify-center"
               >
                 <Twitter size={20} />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-slate-800 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+                className="w-10 h-10 bg-slate-800 rounded-lg hover:bg-[#C89A3D] transition-colors flex items-center justify-center"
               >
                 <Linkedin size={20} />
               </a>
               <a
                 href="#"
-                className="w-10 h-10 bg-slate-800 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+                className="w-10 h-10 bg-slate-800 rounded-lg hover:bg-[#C89A3D] transition-colors flex items-center justify-center"
               >
                 <Instagram size={20} />
               </a>
@@ -45,27 +45,42 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#home" className="text-slate-400 hover:text-white transition">
+                <a
+                  href="#home"
+                  className="text-slate-400 hover:text-white transition"
+                >
                   Home
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-slate-400 hover:text-white transition">
+                <a
+                  href="#about"
+                  className="text-slate-400 hover:text-white transition"
+                >
                   About Us
                 </a>
               </li>
               <li>
-                <a href="#services" className="text-slate-400 hover:text-white transition">
+                <a
+                  href="#services"
+                  className="text-slate-400 hover:text-white transition"
+                >
                   Services
                 </a>
               </li>
               <li>
-                <a href="#portfolio" className="text-slate-400 hover:text-white transition">
+                <a
+                  href="#portfolio"
+                  className="text-slate-400 hover:text-white transition"
+                >
                   Portfolio
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-slate-400 hover:text-white transition">
+                <a
+                  href="#contact"
+                  className="text-slate-400 hover:text-white transition"
+                >
                   Contact
                 </a>
               </li>
@@ -94,7 +109,7 @@ const Footer = () => {
                 placeholder="Your email"
                 className="flex-1 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none text-white"
               />
-              <button className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+              <button className="px-4 py-2 bg-[#C89A3D] rounded-lg hover:bg-[#B8872F]  transition-colors">
                 <Mail size={20} />
               </button>
             </div>

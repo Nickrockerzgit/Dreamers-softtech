@@ -16,3 +16,24 @@
 html {
   scroll-behavior: smooth;
 }
+
+.input {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-bottom: 1px solid #cbd5e1;
+  outline: none;
+  font-size: 14px;
+  line-height: 1.6; /* ✅ CRITICAL FIX */
+  background-color: transparent;
+  appearance: none; /* helps select consistency */
+}
+
+.input:focus {
+  border-color: #ff7a18;
+}
+
+select.input {
+  padding-top: 0px;
+  padding-bottom: 0px; /* prevents vertical clipping */
+}

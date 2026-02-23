@@ -1,24 +1,35 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./components/common/Header";
-import Footer from "./components/common/Footer";
+import ScrollToTop from "./components/home/ScrollToTop";
+
+import MainLayout from "./layouts/MainLayout";
+import NoFooterLayout from "./layouts/NoFooterLayout";
+
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Service from "./pages/Service";
-import ScrollToTop from "./components/home/ScrollToTop";
+import Portfolio from "./pages/Portfolio";
+import ContactInfo from "./pages/Contact";
 
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Header />
 
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Service />} />
-      </Routes>
+        {/* Routes WITH footer */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Service />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/blogs" element={<Portfolio />} />
+        </Route>
 
-      <Footer />
+        {/* Routes WITHOUT footer */}
+        <Route element={<NoFooterLayout />}>
+          <Route path="/contact" element={<ContactInfo />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

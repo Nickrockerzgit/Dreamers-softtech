@@ -58,7 +58,7 @@ const Clients = () => {
               className="client-logo bg-white rounded-xl p-8 shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
             >
               <div className="text-center">
-                <div className="text-3xl font-bold text-slate-300 group-hover:text-blue-600 transition-colors">
+                <div className="text-3xl font-bold text-slate-300 group-hover:text-[#C89A3D] transition-colors">
                   {client.charAt(0)}
                 </div>
                 <div className="text-sm font-semibold text-slate-700 mt-2">

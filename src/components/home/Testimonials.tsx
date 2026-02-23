@@ -73,7 +73,7 @@ const Testimonials = () => {
               key={index}
               className="testimonial-card bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 relative"
             >
-              <div className="absolute -top-4 -left-4 w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
+              <div className="absolute -top-4 -left-4 w-12 h-12 bg-[#C89A3D] rounded-full flex items-center justify-center shadow-lg">
                 <Quote className="w-6 h-6 text-white" />
               </div>
               <p className="text-slate-600 leading-relaxed mb-6 italic">
@@ -83,7 +83,7 @@ const Testimonials = () => {
                 <div className="font-bold text-slate-900 text-lg">
                   {testimonial.name}
                 </div>
-                <div className="text-blue-600 font-medium">
+                <div className="text-[#C89A3D] font-medium">
                   {testimonial.role}
                 </div>
                 <div className="text-sm text-slate-500">
