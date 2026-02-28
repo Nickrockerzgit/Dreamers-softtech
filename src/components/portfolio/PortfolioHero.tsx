@@ -25,7 +25,7 @@ const PortfolioHero = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden flex items-center justify-center text-center text-white"
+      className="relative h-[70vh] overflow-hidden flex items-center justify-center text-center text-white"
     >
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#1c1917] to-[#3a2a0f]" />

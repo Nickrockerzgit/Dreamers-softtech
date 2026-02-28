@@ -4,7 +4,7 @@ import Services from "../components/home/Services";
 import Portfolio from "../components/home/Portfolio";
 import Clients from "../components/home/Clients";
 import Testimonials from "../components/home/Testimonials";
-import Team from "../components/home/Team";
+// import Team from "../components/home/Team";
 import Contact from "../components/home/Contact";
 
 const Home = () => {
@@ -16,7 +16,7 @@ const Home = () => {
       <Portfolio />
       <Clients />
       <Testimonials />
-      <Team />
+      {/* <Team /> */}
       <Contact />
     </>
   );

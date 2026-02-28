@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const location = useLocation();
+  const isBlogsPage = location.pathname === "/blogs";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,17 +27,23 @@ const Header = () => {
     { name: "Blogs", href: "/blogs" },
   ];
 
+  const isDarkMode = isBlogsPage || isScrolled;
+
+  const textColor = isDarkMode ? "text-black" : "text-white";
+
+  const backgroundColor = isDarkMode ? "bg-white shadow-md" : "bg-transparent";
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-lg backdrop-blur-3xl" : "bg-transparent"
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        backgroundColor
       }`}
     >
       <nav className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div
             className={`text-2xl font-bold transition-colors duration-300 ${
-              isScrolled ? "text-[#B8872F]" : "text-white"
+              textColor
             }`}
           >
             Dreamers Softtech LLP
@@ -45,7 +55,7 @@ const Header = () => {
                 key={link.name}
                 to={link.href}
                 className={`text-sm font-medium transition-colors ${
-                  isScrolled
+                  isDarkMode
                     ? "text-slate-700 hover:text-[#C89A3D]"
                     : "text-white hover:text-[#C89A3D]"
                 }`}
@@ -63,7 +73,7 @@ const Header = () => {
 
           <button
             className={`md:hidden transition-colors duration-300 ${
-              isScrolled ? "text-slate-800" : "text-white"
+              isDarkMode ? "text-slate-800" : "text-white"
             }`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >

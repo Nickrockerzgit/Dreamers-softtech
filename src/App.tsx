@@ -10,6 +10,9 @@ import Service from "./pages/Service";
 import Portfolio from "./pages/Portfolio";
 import ContactInfo from "./pages/Contact";
 
+import Blogs from "./pages/Blogs";
+// import BlogDetail from "./pages/BlogDetail";
+
 function App() {
   return (
     <BrowserRouter>
@@ -22,7 +25,8 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Service />} />
           <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/blogs" element={<Portfolio />} />
+          <Route path="/blogs" element={<Blogs />} />
+          {/* <Route path="/blog/:id" element={<BlogDetail />} /> */}
         </Route>
 
         {/* Routes WITHOUT footer */}

@@ -10,7 +10,27 @@ const Testimonials = () => {
   const cardsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {}, sectionRef);
+    const ctx = gsap.context(() => {
+      if (!cardsRef.current) return;
+
+      // Select cards and reverse for bottom-up cascade
+      const cards = gsap.utils
+        .toArray<HTMLElement>(".testimonial-card")
+        .reverse();
+
+      gsap.from(cards, {
+        scrollTrigger: {
+          trigger: cardsRef.current,
+          start: "top 80%",
+        },
+        y: 70, // Start below
+        opacity: 1,
+        scale: 0.95,
+        duration: 0.6,
+        ease: "elastic.out(1, 0.6)", // Elastic bounce
+        stagger: 0.15, // Ripple effect
+      });
+    }, sectionRef);
 
     return () => ctx.revert();
   }, []);
@@ -52,9 +72,10 @@ const Testimonials = () => {
     <section
       id="testimonials"
       ref={sectionRef}
-      className="py-20 bg-gradient-to-br from-slate-50 to-blue-50"
+      className="py-20 bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
             What Our Clients Say
@@ -64,6 +85,7 @@ const Testimonials = () => {
           </p>
         </div>
 
+        {/* Testimonials Grid */}
         <div
           ref={cardsRef}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -71,14 +93,19 @@ const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="testimonial-card bg-white rounded-xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 relative"
+              className="testimonial-card bg-white rounded-xl p-8 shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 relative"
             >
+              {/* Quote Icon */}
               <div className="absolute -top-4 -left-4 w-12 h-12 bg-[#C89A3D] rounded-full flex items-center justify-center shadow-lg">
                 <Quote className="w-6 h-6 text-white" />
               </div>
+
+              {/* Text */}
               <p className="text-slate-600 leading-relaxed mb-6 italic">
                 "{testimonial.text}"
               </p>
+
+              {/* Author Info */}
               <div className="border-t border-slate-200 pt-6">
                 <div className="font-bold text-slate-900 text-lg">
                   {testimonial.name}
