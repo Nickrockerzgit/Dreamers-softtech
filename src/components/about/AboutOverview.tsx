@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import {
   Calendar,
   MapPin,
@@ -11,61 +12,120 @@ const data = [
   {
     icon: Calendar,
     title: "Founded in 2020",
-    desc: "Nextloop Technologies delivers innovative IT solutions across industries.",
+    desc: "Dreamers Softtech delivers innovative IT solutions across industries with a passion for excellence.",
   },
   {
     icon: MapPin,
-    title: "Location",
-    desc: "Headquartered in Indore, with an office in the UK.",
+    title: "Our Location",
+    desc: "Headquartered in Indore, with a growing presence and an office in the UK.",
   },
   {
     icon: BadgeCheck,
     title: "Certifications",
-    desc: "Globally recognized standards achieved.",
+    desc: "Globally recognized standards achieved — quality and compliance at every step.",
   },
   {
     icon: Rocket,
-    title: "Projects Completed",
-    desc: "Successfully delivered 30+ projects globally.",
+    title: "30+ Projects",
+    desc: "Successfully delivered projects across diverse industries and global markets.",
   },
   {
     icon: Headphones,
-    title: "Expertise",
+    title: "Our Expertise",
     desc: "Specializing in Cloud Solutions, Blockchain, Custom Software, and Digital Transformation.",
   },
   {
     icon: Trophy,
     title: "Recognition",
-    desc: "Renowned for delivering award-winning IT solutions.",
+    desc: "Renowned for delivering award-winning IT solutions that make a measurable impact.",
   },
 ];
 
 const AboutOverview = () => {
+  const headingRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<HTMLDivElement[]>([]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            (entry.target as HTMLElement).style.opacity = "1";
+            (entry.target as HTMLElement).style.transform = "translateY(0)";
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+
+    if (headingRef.current) observer.observe(headingRef.current);
+    cardRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="bg-white py-24">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="bg-gray-50 py-28 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
-        <h2 className="text-4xl font-bold text-center text-black mb-16">
-          YOUR END-TO-END{" "}
-          <span className="text-[#C89A3D]">SOFTWARE DEVELOPMENT</span> PARTNER
-        </h2>
+        <div
+          ref={headingRef}
+          className="text-center mb-16 max-w-3xl mx-auto"
+          style={{
+            opacity: 0,
+            transform: "translateY(28px)",
+            transition:
+              "opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1)",
+          }}
+        >
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-8 h-px bg-[#C89A3D]" />
+            <span className="text-xs uppercase tracking-widest text-[#C89A3D] font-semibold">
+              Who We Are
+            </span>
+            <div className="w-8 h-px bg-[#C89A3D]" />
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+            Your End-to-End{" "}
+            <span className="text-[#C89A3D]">Software Development</span> Partner
+          </h2>
+        </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={index}
-                className="border border-gray-200 p-6 hover:shadow-md transition"
+                ref={(el) => {
+                  if (el) cardRefs.current[index] = el;
+                }}
+                className="group relative bg-white rounded-2xl p-7 border border-gray-100 hover:border-[#C89A3D]/30 shadow-sm hover:shadow-lg transition-all duration-400 overflow-hidden cursor-default"
+                style={{
+                  opacity: 0,
+                  transform: "translateY(40px)",
+                  transition: `opacity 0.75s cubic-bezier(0.4,0,0.2,1) ${index * 80}ms, transform 0.75s cubic-bezier(0.4,0,0.2,1) ${index * 80}ms, box-shadow 0.3s ease, border-color 0.3s ease`,
+                }}
               >
-                <Icon className="w-8 h-8 text-[#C89A3D] mb-4" />
+                {/* Hover bg glow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#C89A3D]/04 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                <h3 className="text-lg font-semibold text-black mb-2">
+                {/* Top accent line */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#C89A3D] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                {/* Icon box */}
+                <div className="w-12 h-12 rounded-xl bg-[#C89A3D]/10 flex items-center justify-center mb-5 group-hover:bg-[#C89A3D]/20 transition-colors duration-300">
+                  <Icon className="w-5 h-5 text-[#C89A3D]" />
+                </div>
+
+                {/* Content */}
+                <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-[#C89A3D] transition-colors duration-300">
                   {item.title}
                 </h3>
-
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-500 text-sm leading-relaxed">
                   {item.desc}
                 </p>
               </div>

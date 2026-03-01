@@ -1,3 +1,4 @@
+import { ArrowRight, Clock, User } from "lucide-react";
 import { Blog } from "../../data/blogs";
 
 interface Props {
@@ -6,26 +7,57 @@ interface Props {
 
 const BlogCard = ({ blog }: Props) => {
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-      <img
-        src={blog.image}
-        alt={blog.title}
-        className="w-full h-[210px] object-cover"
-      />
-
-      <div className="p-6">
-        <span className="text-xs text-[#C89A3D] font-semibold">
+    <div className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#C89A3D]/20 transition-all duration-400 flex flex-col cursor-pointer">
+      {/* Image */}
+      <div className="relative h-52 overflow-hidden">
+        <img
+          src={blog.image}
+          alt={blog.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+        />
+        {/* Category pill over image */}
+        <span className="absolute top-3 left-3 bg-[#C89A3D] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
           {blog.category}
         </span>
+      </div>
 
-        <h3 className="text-lg font-bold mt-2">{blog.title}</h3>
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-grow">
+        {/* Title */}
+        <h3 className="text-base font-bold text-gray-900 leading-snug mb-2 group-hover:text-[#C89A3D] transition-colors duration-300 line-clamp-2">
+          {blog.title}
+        </h3>
 
-        <p className="text-sm text-slate-600 mt-2">{blog.excerpt}</p>
+        {/* Excerpt */}
+        <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 flex-grow">
+          {blog.excerpt}
+        </p>
 
-        <div className="mt-4 text-xs text-slate-500">
-          {blog.author} • {blog.readTime}
+        {/* Divider */}
+        <div className="my-4 h-px bg-gray-100" />
+
+        {/* Footer row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 text-xs text-gray-400">
+            <span className="flex items-center gap-1">
+              <User className="w-3 h-3" />
+              {blog.author}
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {blog.readTime}
+            </span>
+          </div>
+
+          {/* Read more */}
+          <span className="flex items-center gap-1 text-[#C89A3D] text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            Read <ArrowRight className="w-3.5 h-3.5" />
+          </span>
         </div>
       </div>
+
+      {/* Bottom gold accent bar */}
+      <div className="h-0.5 bg-gradient-to-r from-transparent via-[#C89A3D] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     </div>
   );
 };
