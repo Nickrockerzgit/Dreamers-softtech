@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowDown } from "lucide-react";
 
 const stats = [
-  { value: "120+", label: "Projects" },
+  { value: "2+", label: "Projects" },
   { value: "98%", label: "Satisfaction" },
-  { value: "6+", label: "Years" },
+  { value: "1+", label: "Years" },
 ];
 
 const PortfolioHero = () => {

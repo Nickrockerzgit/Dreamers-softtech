@@ -11,13 +11,13 @@ import {
 const data = [
   {
     icon: Calendar,
-    title: "Founded in 2020",
+    title: "Founded in 2025",
     desc: "Dreamers Softtech delivers innovative IT solutions across industries with a passion for excellence.",
   },
   {
     icon: MapPin,
     title: "Our Location",
-    desc: "Headquartered in Indore, with a growing presence and an office in the UK.",
+    desc: "Headquartered in Indore, serving clients across regions.",
   },
   {
     icon: BadgeCheck,
@@ -26,13 +26,13 @@ const data = [
   },
   {
     icon: Rocket,
-    title: "30+ Projects",
+    title: "2+ Projects",
     desc: "Successfully delivered projects across diverse industries and global markets.",
   },
   {
     icon: Headphones,
     title: "Our Expertise",
-    desc: "Specializing in Cloud Solutions, Blockchain, Custom Software, and Digital Transformation.",
+    desc: "Delivering expert solutions in Web Development, App Development, UI/UX Design, AI/ML, and Deployment Services..",
   },
   {
     icon: Trophy,

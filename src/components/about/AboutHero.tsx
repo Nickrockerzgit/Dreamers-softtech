@@ -2,9 +2,9 @@ import { useEffect, useRef } from "react";
 import { ArrowDown } from "lucide-react";
 
 const stats = [
-  { value: "6+", label: "Years of Excellence" },
-  { value: "120+", label: "Projects Delivered" },
-  { value: "40+", label: "Team Members" },
+  { value: "1+", label: "Years of Excellence" },
+  { value: "2+", label: "Projects Delivered" },
+  { value: "8+", label: "Team Members" },
   { value: "98%", label: "Client Satisfaction" },
 ];
 
@@ -62,7 +62,7 @@ const AboutHero = () => {
         style={{
           background:
             "linear-gradient(to bottom, transparent, #C89A3D55, transparent)",
-          left: "18%",
+          left: "25%",
           transform: "rotate(0deg)",
         }}
       />
@@ -72,7 +72,7 @@ const AboutHero = () => {
         style={{
           background:
             "linear-gradient(to bottom, transparent, #C89A3D44, transparent)",
-          left: "72%",
+          left: "75%",
         }}
       />
 

@@ -94,7 +94,7 @@ const Footer = () => {
               {[
                 { icon: Mail, text: "info@dreamerssofttech.com" },
                 { icon: Phone, text: "+91 98765 43210" },
-                { icon: MapPin, text: "Bangalore, India" },
+                { icon: MapPin, text: "Indore, India" },
               ].map(({ icon: Icon, text }, i) => (
                 <div
                   key={i}
@@ -193,16 +193,14 @@ const Footer = () => {
 
             {/* Trust badges */}
             <div className="mt-6 flex flex-wrap gap-2">
-              {["120+ Projects", "98% Satisfaction", "6+ Years"].map(
-                (badge) => (
-                  <span
-                    key={badge}
-                    className="text-[10px] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400"
-                  >
-                    {badge}
-                  </span>
-                ),
-              )}
+              {["2+ Projects", "98% Satisfaction", "1+ Years"].map((badge) => (
+                <span
+                  key={badge}
+                  className="text-[10px] px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400"
+                >
+                  {badge}
+                </span>
+              ))}
             </div>
           </div>
         </div>

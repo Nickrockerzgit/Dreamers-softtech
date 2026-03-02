@@ -116,11 +116,6 @@ const ProjectCard = ({
       {/* Hover overlay — fades in */}
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      {/* Tag */}
-      <div className="absolute top-5 left-5 bg-white/15 backdrop-blur-sm border border-white/25 text-white text-xs font-bold px-3 py-1 rounded-full">
-        {project.tag}
-      </div>
-
       {/* Category pill */}
       <div className="absolute top-5 right-5 bg-[#C89A3D] text-white text-[10px] font-semibold px-3 py-1 rounded-full tracking-wide">
         {project.category}
@@ -273,10 +268,10 @@ const PortfolioSection = () => {
               </p>
               <div className="grid grid-cols-2 gap-4 mt-4">
                 {[
-                  { value: "120+", label: "Projects" },
+                  { value: "2+", label: "Projects" },
                   { value: "98%", label: "Satisfaction" },
-                  { value: "6+", label: "Years" },
-                  { value: "40+", label: "Team" },
+                  { value: "1+", label: "Years" },
+                  { value: "8+", label: "Team" },
                 ].map((s) => (
                   <div key={s.label} className="bg-white/15 rounded-2xl p-3">
                     <p className="text-white text-2xl font-bold">{s.value}</p>
