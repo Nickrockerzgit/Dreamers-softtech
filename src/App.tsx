@@ -10,6 +10,16 @@ import Service from "./pages/Service";
 import Portfolio from "./pages/Portfolio";
 import ContactInfo from "./pages/Contact";
 
+import {
+  BlogsAdmin,
+  Dashboard,
+  PortfolioAdmin,
+  MessagesAdmin,
+  SettingsAdmin,
+} from "./admin/pages";
+// import Dashboard from "./admin/pages/Dashboard";
+import AdminLayout from "./layouts/AdminLayout";
+
 import Blogs from "./pages/Blogs";
 // import BlogDetail from "./pages/BlogDetail";
 
@@ -32,6 +42,14 @@ function App() {
         {/* Routes WITHOUT footer */}
         <Route element={<NoFooterLayout />}>
           <Route path="/contact" element={<ContactInfo />} />
+        </Route>
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="blogs" element={<BlogsAdmin />} />
+          <Route path="messages" element={<MessagesAdmin />} />
+          <Route path="portfolio" element={<PortfolioAdmin />} />
+          <Route path="settings" element={<SettingsAdmin />} />
         </Route>
       </Routes>
     </BrowserRouter>
