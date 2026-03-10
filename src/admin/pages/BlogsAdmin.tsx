@@ -1,94 +1,16 @@
-import { useState, useRef } from "react";
-import { Plus, Search, X, CheckCircle2, AlertCircle } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Plus,
+  Search,
+  X,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 import AdminHeader from "../components/AdminHeader";
 import BlogTable from "../components/BlogTable";
+import { blogApi } from "../../api/blogApi";
 import type { BlogPost, ModalMode, FilterStatus } from "../types/blog.types.ts";
-
-// ─── Seed data (replace with API later) ──────────────────────────────────────
-const SEED_POSTS: BlogPost[] = [
-  {
-    id: "1",
-    title: "Building Scalable React Applications in 2024",
-    slug: "building-scalable-react-apps-2024",
-    author: "Brijesh Patel",
-    category: "Engineering",
-    tags: ["React", "TypeScript", "Architecture"],
-    status: "published",
-    excerpt:
-      "An in-depth guide on structuring large-scale React apps with TypeScript.",
-    content: "",
-    coverImage:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&q=80",
-    createdAt: "2024-11-15",
-    updatedAt: "2024-11-20",
-    views: 3420,
-  },
-  {
-    id: "2",
-    title: "Mastering Tailwind CSS: Advanced Patterns",
-    slug: "mastering-tailwind-css-advanced",
-    author: "Priya Sharma",
-    category: "Design",
-    tags: ["CSS", "Tailwind", "UI"],
-    status: "published",
-    excerpt:
-      "Unlock the full potential of Tailwind CSS with component patterns.",
-    content: "",
-    coverImage:
-      "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=400&q=80",
-    createdAt: "2024-10-28",
-    updatedAt: "2024-10-28",
-    views: 2187,
-  },
-  {
-    id: "3",
-    title: "Node.js Microservices with Docker",
-    slug: "nodejs-microservices-docker",
-    author: "Rahul Verma",
-    category: "DevOps",
-    tags: ["Node.js", "Docker"],
-    status: "draft",
-    excerpt:
-      "Step-by-step tutorial on containerised microservices using Docker Compose.",
-    content: "",
-    coverImage: "",
-    createdAt: "2024-12-01",
-    updatedAt: "2024-12-03",
-    views: 0,
-  },
-  {
-    id: "4",
-    title: "The Future of AI in Software Development",
-    slug: "ai-future-software-development",
-    author: "Brijesh Patel",
-    category: "AI & ML",
-    tags: ["AI", "LLM"],
-    status: "published",
-    excerpt: "Exploring how LLMs are reshaping the developer workflow.",
-    content: "",
-    coverImage:
-      "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=80",
-    createdAt: "2024-09-10",
-    updatedAt: "2024-09-12",
-    views: 5891,
-  },
-  {
-    id: "5",
-    title: "UX Writing: Words That Convert",
-    slug: "ux-writing-words-convert",
-    author: "Ananya Singh",
-    category: "Design",
-    tags: ["UX", "Copywriting"],
-    status: "archived",
-    excerpt:
-      "How intentional micro-copy drives measurable product improvements.",
-    content: "",
-    coverImage: "",
-    createdAt: "2024-07-05",
-    updatedAt: "2024-08-01",
-    views: 1543,
-  },
-];
 
 const CATEGORIES = [
   "Engineering",
@@ -194,7 +116,8 @@ function Toast({ msg, type }: { msg: string; type: "success" | "error" }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 const BlogsAdmin = () => {
-  const [posts, setPosts] = useState<BlogPost[]>(SEED_POSTS);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [filterCategory, setFilterCategory] = useState("all");
@@ -208,6 +131,23 @@ const BlogsAdmin = () => {
     type: "success" | "error";
   } | null>(null);
   const tagRef = useRef<HTMLInputElement>(null);
+
+  // ── Fetch all blogs on mount ──────────────────────────────────────────────
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  async function fetchBlogs() {
+    try {
+      setLoading(true);
+      const res = await blogApi.getAll();
+      setPosts(res.data.data);
+    } catch {
+      showToast("Failed to fetch blogs", "error");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   // ── Derived ──────────────────────────────────────────────────────────────
   const filtered = posts.filter((p) => {
@@ -267,54 +207,59 @@ const BlogsAdmin = () => {
     setSelectedPost(null);
   }
 
-  function handleSave() {
+  // ── CREATE / EDIT ─────────────────────────────────────────────────────────
+  async function handleSave() {
     if (!formData.title.trim()) {
       showToast("Title is required", "error");
       return;
     }
-    const now = new Date().toISOString().split("T")[0];
-    if (modalMode === "create") {
-      const newPost: BlogPost = {
-        ...formData,
-        id: Date.now().toString(),
-        slug: formData.slug || slugify(formData.title),
-        createdAt: now,
-        updatedAt: now,
-        views: 0,
-      };
-      setPosts((p) => [newPost, ...p]);
-      showToast("Post created successfully!");
-    } else if (modalMode === "edit" && selectedPost) {
-      setPosts((p) =>
-        p.map((post) =>
-          post.id === selectedPost.id
-            ? {
-                ...post,
-                ...formData,
-                slug: formData.slug || slugify(formData.title),
-                updatedAt: now,
-              }
-            : post,
-        ),
-      );
-      showToast("Post updated successfully!");
+    try {
+      if (modalMode === "create") {
+        const res = await blogApi.create({
+          ...formData,
+          slug: formData.slug || slugify(formData.title),
+        });
+        setPosts((p) => [res.data.data, ...p]);
+        showToast("Post created successfully!");
+      } else if (modalMode === "edit" && selectedPost) {
+        const res = await blogApi.update(selectedPost.id, {
+          ...formData,
+          slug: formData.slug || slugify(formData.title),
+        });
+        setPosts((p) =>
+          p.map((post) => (post.id === selectedPost.id ? res.data.data : post)),
+        );
+        showToast("Post updated successfully!");
+      }
+      closeModal();
+    } catch {
+      showToast("Something went wrong", "error");
     }
-    closeModal();
   }
 
-  function handleDelete(id: string) {
-    setPosts((p) => p.filter((post) => post.id !== id));
-    setDeleteConfirmId(null);
-    showToast("Post deleted.");
+  // ── DELETE ────────────────────────────────────────────────────────────────
+  async function handleDelete(id: string) {
+    try {
+      await blogApi.delete(id);
+      setPosts((p) => p.filter((post) => post.id !== id));
+      setDeleteConfirmId(null);
+      showToast("Post deleted.");
+    } catch {
+      showToast("Failed to delete post", "error");
+    }
   }
 
-  function handleToggleStatus(post: BlogPost) {
+  // ── TOGGLE STATUS ─────────────────────────────────────────────────────────
+  async function handleToggleStatus(post: BlogPost) {
     const next: BlogPost["status"] =
       post.status === "published" ? "draft" : "published";
-    setPosts((p) =>
-      p.map((pr) => (pr.id === post.id ? { ...pr, status: next } : pr)),
-    );
-    showToast(`Marked as ${next}`);
+    try {
+      const res = await blogApi.update(post.id, { status: next });
+      setPosts((p) => p.map((pr) => (pr.id === post.id ? res.data.data : pr)));
+      showToast(`Marked as ${next}`);
+    } catch {
+      showToast("Failed to update status", "error");
+    }
   }
 
   function addTag() {
@@ -393,7 +338,7 @@ const BlogsAdmin = () => {
             {filtered.length} post{filtered.length !== 1 ? "s" : ""}
           </span>
 
-          {/* New post button — matches project CTA style */}
+          {/* New post button */}
           <button
             onClick={openCreate}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow hover:shadow-lg hover:shadow-[#C89A3D]/25 group"
@@ -404,13 +349,22 @@ const BlogsAdmin = () => {
         </div>
 
         {/* Table */}
-        <BlogTable
-          posts={filtered}
-          onView={openView}
-          onEdit={openEdit}
-          onDelete={(id) => setDeleteConfirmId(id)}
-          onToggleStatus={handleToggleStatus}
-        />
+        {loading ? (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm py-20 flex items-center justify-center">
+            <div className="flex items-center gap-3 text-gray-400">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span className="text-sm">Loading blogs...</span>
+            </div>
+          </div>
+        ) : (
+          <BlogTable
+            posts={filtered}
+            onView={openView}
+            onEdit={openEdit}
+            onDelete={(id) => setDeleteConfirmId(id)}
+            onToggleStatus={handleToggleStatus}
+          />
+        )}
       </div>
 
       {/* ── Create / Edit Modal ── */}

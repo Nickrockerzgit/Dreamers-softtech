@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import emailjs from "@emailjs/browser";
 import {
   FaFacebookF,
   FaInstagram,
@@ -7,7 +8,21 @@ import {
   FaEnvelope,
   FaGithub,
 } from "react-icons/fa6";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import {
+  Mail,
+  MapPin,
+  Phone,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
+
+// ─── PASTE YOUR KEYS HERE ─────────────────────────────────────────────────────
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+// ─────────────────────────────────────────────────────────────────────────────
 
 const contactDetails = [
   { icon: Mail, text: "info@dreamerssofttech.com" },
@@ -24,10 +39,33 @@ const socials = [
   { icon: <FaEnvelope />, label: "Email" },
 ];
 
+const SUBJECTS = [
+  { value: "web", label: "Web Development" },
+  { value: "mobile", label: "Mobile App Development" },
+  { value: "ai", label: "AI / ML" },
+  { value: "devops", label: "DevOps & Cloud" },
+  { value: "web3", label: "Web3" },
+];
+
+type Status = "idle" | "loading" | "success" | "error";
+
 const ContactSection = () => {
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
 
+  // ── Form state ──────────────────────────────────────────────────────────────
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+  const [status, setStatus] = useState<Status>("idle");
+  const [errMsg, setErrMsg] = useState("");
+
+  // ── Intersection animation ───────────────────────────────────────────────────
   useEffect(() => {
     const els = [
       { el: leftRef.current, delay: 0 },
@@ -50,6 +88,81 @@ const ContactSection = () => {
       observer.observe(el);
     });
   }, []);
+
+  // ── Handlers ─────────────────────────────────────────────────────────────────
+  function handleChange(
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) {
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    // Basic validation
+    if (!form.firstName.trim()) {
+      setErrMsg("First name is required.");
+      setStatus("error");
+      return;
+    }
+    if (!form.email.trim()) {
+      setErrMsg("Email address is required.");
+      setStatus("error");
+      return;
+    }
+    if (!form.subject) {
+      setErrMsg("Please select a subject.");
+      setStatus("error");
+      return;
+    }
+    if (!form.message.trim()) {
+      setErrMsg("Message cannot be empty.");
+      setStatus("error");
+      return;
+    }
+
+    setStatus("loading");
+    setErrMsg("");
+
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          name: `${form.firstName} ${form.lastName}`.trim(),
+          email: form.email,
+          phone: form.phone || "Not provided",
+          subject: form.subject,
+          message: form.message,
+        },
+        EMAILJS_PUBLIC_KEY,
+      );
+
+      setStatus("success");
+      // Reset form
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+
+      // Auto reset success after 5s
+      setTimeout(() => setStatus("idle"), 5000);
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      setStatus("error");
+      setErrMsg("Something went wrong. Please try again.");
+    }
+  }
+
+  // ── Shared input class ────────────────────────────────────────────────────────
+  const inputCls =
+    "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#C89A3D]/60 focus:bg-white/8 transition-all duration-200";
 
   return (
     <section className="relative min-h-screen flex items-center py-32 overflow-hidden">
@@ -181,80 +294,122 @@ const ContactSection = () => {
                 </p>
               </div>
 
-              <form className="space-y-4">
-                {/* Name row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="First name *"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#C89A3D]/60 focus:bg-white/8 transition-all duration-200"
-                    />
+              {/* ── Success State ── */}
+              {status === "success" ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4">
+                    <CheckCircle2 className="w-8 h-8 text-green-400" />
                   </div>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Last name *"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#C89A3D]/60 focus:bg-white/8 transition-all duration-200"
-                    />
-                  </div>
+                  <h4 className="text-white font-bold text-lg mb-2">
+                    Message Sent!
+                  </h4>
+                  <p className="text-slate-400 text-sm">
+                    Thanks for reaching out. We'll get back to you within 24
+                    hours.
+                  </p>
                 </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Error message */}
+                  {status === "error" && errMsg && (
+                    <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      {errMsg}
+                    </div>
+                  )}
 
-                <input
-                  type="email"
-                  placeholder="Email Address *"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#C89A3D]/60 focus:bg-white/8 transition-all duration-200"
-                />
+                  {/* Name row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={form.firstName}
+                      onChange={handleChange}
+                      placeholder="First name *"
+                      className={inputCls}
+                    />
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={form.lastName}
+                      onChange={handleChange}
+                      placeholder="Last name"
+                      className={inputCls}
+                    />
+                  </div>
 
-                <input
-                  type="text"
-                  placeholder="Phone Number"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#C89A3D]/60 focus:bg-white/8 transition-all duration-200"
-                />
+                  {/* Email */}
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="Email Address *"
+                    className={inputCls}
+                  />
 
-                <select
-                  defaultValue=""
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-500 focus:outline-none focus:border-[#C89A3D]/60 focus:bg-white/8 transition-all duration-200 appearance-none"
-                  style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
-                  onChange={(e) => {
-                    e.currentTarget.classList.remove("text-slate-500");
-                    e.currentTarget.classList.add("text-white");
-                  }}
-                >
-                  <option value="" disabled hidden className="bg-[#0c1117]">
-                    Select a subject
-                  </option>
-                  <option value="web" className="bg-[#0c1117] text-white">
-                    Web Development
-                  </option>
-                  <option value="mobile" className="bg-[#0c1117] text-white">
-                    Mobile App Development
-                  </option>
-                  <option value="ai" className="bg-[#0c1117] text-white">
-                    AI / ML
-                  </option>
-                  <option value="devops" className="bg-[#0c1117] text-white">
-                    DevOps & Cloud
-                  </option>
-                  <option value="web3" className="bg-[#0c1117] text-white">
-                    Web3
-                  </option>
-                </select>
+                  {/* Phone */}
+                  <input
+                    type="text"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    placeholder="Phone Number"
+                    className={inputCls}
+                  />
 
-                <textarea
-                  rows={4}
-                  placeholder="Your message *"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#C89A3D]/60 focus:bg-white/8 transition-all duration-200 resize-none"
-                />
+                  {/* Subject */}
+                  <select
+                    name="subject"
+                    value={form.subject}
+                    onChange={handleChange}
+                    className={`${inputCls} ${form.subject ? "text-white" : "text-slate-500"} appearance-none`}
+                    style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+                  >
+                    <option value="" disabled hidden className="bg-[#0c1117]">
+                      Select a subject *
+                    </option>
+                    {SUBJECTS.map((s) => (
+                      <option
+                        key={s.value}
+                        value={s.label}
+                        className="bg-[#0c1117] text-white"
+                      >
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
 
-                <button
-                  type="submit"
-                  className="w-full py-3.5 rounded-xl bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold text-sm transition-all duration-200 shadow-lg hover:shadow-[#C89A3D]/30 hover:shadow-xl flex items-center justify-center gap-2 group"
-                >
-                  Send Message
-                  <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                </button>
-              </form>
+                  {/* Message */}
+                  <textarea
+                    rows={4}
+                    name="message"
+                    value={form.message}
+                    onChange={handleChange}
+                    placeholder="Your message *"
+                    className={`${inputCls} resize-none`}
+                  />
+
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    disabled={status === "loading"}
+                    className="w-full py-3.5 rounded-xl bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold text-sm transition-all duration-200 shadow-lg hover:shadow-[#C89A3D]/30 hover:shadow-xl flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {status === "loading" ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send Message
+                        <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>
