@@ -24,6 +24,8 @@ const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { messageApi } from "../../api/messageApi";
+
 const contactDetails = [
   { icon: Mail, text: "info@dreamerssofttech.com" },
   { icon: MapPin, text: "123 Tech Park, Cyber City, Bangalore, India" },
@@ -127,6 +129,7 @@ const ContactSection = () => {
     setErrMsg("");
 
     try {
+      // 1. Send Email via EmailJS
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
@@ -139,6 +142,19 @@ const ContactSection = () => {
         },
         EMAILJS_PUBLIC_KEY,
       );
+
+      // 2. Save log to Backend Database for Admin Dashboard
+      try {
+        await messageApi.createMessage({
+          name: `${form.firstName} ${form.lastName}`.trim(),
+          email: form.email,
+          phone: form.phone || "Not provided",
+          subject: form.subject,
+          message: form.message,
+        });
+      } catch (dbErr) {
+        console.error("Database save error (non-fatal):", dbErr);
+      }
 
       setStatus("success");
       // Reset form

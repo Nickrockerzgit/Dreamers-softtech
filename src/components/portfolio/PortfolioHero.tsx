@@ -1,19 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowDown } from "lucide-react";
-
-const stats = [
-  { value: "2+", label: "Projects" },
-  { value: "98%", label: "Satisfaction" },
-  { value: "1+", label: "Years" },
-];
+import { usePublicStats } from "../../hooks/usePublicStats";
 
 const PortfolioHero = () => {
+  const { stats: siteStats } = usePublicStats();
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLDivElement>(null);
-  const [ready, setReady] = useState(false);
 
   // Entrance animation on mount
   useEffect(() => {
@@ -31,8 +26,6 @@ const PortfolioHero = () => {
         el.style.transform = "translateY(0)";
       }, delay);
     });
-
-    setReady(true);
   }, []);
 
   return (
@@ -118,7 +111,11 @@ const PortfolioHero = () => {
               "opacity 0.9s cubic-bezier(0.4,0,0.2,1), transform 0.9s cubic-bezier(0.4,0,0.2,1)",
           }}
         >
-          {stats.map((s, i) => (
+          {[
+            { value: `${siteStats.projectsCompleted}+`, label: "Projects" },
+            { value: `${siteStats.satisfactionRate}%`, label: "Satisfaction" },
+            { value: `${siteStats.yearsExperience}+`, label: "Years" },
+          ].map((s, i) => (
             <div key={i} className="text-center">
               <p className="text-3xl font-extrabold text-[#C89A3D]">
                 {s.value}
@@ -132,7 +129,16 @@ const PortfolioHero = () => {
 
         {/* CTA Buttons */}
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          <button className="px-7 py-3 bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg hover:shadow-[#C89A3D]/30 hover:shadow-xl">
+          <button
+            onClick={() => {
+              const target = document.getElementById("portfolio-section");
+              if (target) {
+                const top = target.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top, behavior: "smooth" });
+              }
+            }}
+            className="px-7 py-3 bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg hover:shadow-[#C89A3D]/30 hover:shadow-xl"
+          >
             Explore Projects
           </button>
           <button className="px-7 py-3 bg-white/8 hover:bg-white/15 border border-white/20 text-white font-semibold rounded-xl text-sm transition-all duration-200 backdrop-blur-sm">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminHeader from "../components/AdminHeader";
 import {
   Search,
@@ -11,7 +11,13 @@ import {
   X,
   ChevronRight,
   Inbox,
+  Building2,
+  Briefcase,
+  IndianRupee,
+  Calendar,
+  FileText,
 } from "lucide-react";
+import { messageApi } from "../../api/messageApi";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type MessageStatus = "unread" | "read";
@@ -27,76 +33,6 @@ interface Message {
   receivedAt: string;
   status: MessageStatus;
 }
-
-// ─── Seed Data ────────────────────────────────────────────────────────────────
-const SEED_MESSAGES: Message[] = [
-  {
-    id: "1",
-    name: "Ravi Mehta",
-    email: "ravi.mehta@gmail.com",
-    phone: "+91 98765 43210",
-    subject: "Need a custom billing software",
-    message:
-      "Hi, I run a restaurant chain with 3 outlets and we're looking for a custom billing and inventory management system. Could you share your pricing and timeline? We need it to be integrated with our existing POS hardware.",
-    receivedAt: "2026-03-08T09:15:00",
-    status: "unread",
-  },
-  {
-    id: "2",
-    name: "Sneha Joshi",
-    email: "sneha.joshi@nexuscorp.in",
-    phone: "+91 91234 56789",
-    subject: "Website redesign for our company",
-    message:
-      "Hello, we are Nexus Corp and we're looking to redesign our corporate website. We want a modern look with animations and a CMS for blog management. Please let us know your availability.",
-    receivedAt: "2026-03-07T14:30:00",
-    status: "unread",
-  },
-  {
-    id: "3",
-    name: "Arjun Patel",
-    email: "arjun@medcareclinic.com",
-    phone: "+91 87654 32109",
-    subject: "Patient portal follow up",
-    message:
-      "Hi team, just following up on the patient portal project. Could you share the latest build link for review? Our doctors are waiting to test the appointment module.",
-    receivedAt: "2026-03-06T11:00:00",
-    status: "read",
-  },
-  {
-    id: "4",
-    name: "Priya Sharma",
-    email: "priya.sharma@freshmart.in",
-    phone: "+91 99887 76655",
-    subject: "Dashboard bug report",
-    message:
-      "Hello, we noticed that the inventory dashboard is showing incorrect stock counts for our Pune outlet. The numbers don't match after we updated the stock manually. Please look into this at the earliest.",
-    receivedAt: "2026-03-05T16:45:00",
-    status: "read",
-  },
-  {
-    id: "5",
-    name: "Karan Verma",
-    email: "karan.v@startupx.io",
-    phone: "+91 70011 22334",
-    subject: "Mobile app development inquiry",
-    message:
-      "Hey Dreamers team! We are a startup based in Bangalore and we need a cross-platform mobile app for our logistics platform. Looking for React Native developers. Can we schedule a call this week?",
-    receivedAt: "2026-03-04T10:20:00",
-    status: "read",
-  },
-  {
-    id: "6",
-    name: "Anita Desai",
-    email: "anita.desai@edulearn.org",
-    phone: "+91 82233 44556",
-    subject: "E-learning platform quote",
-    message:
-      "We are an NGO working in education and we want to build an e-learning platform for underprivileged students. We have limited budget but would love to discuss options. Please get in touch.",
-    receivedAt: "2026-03-03T08:55:00",
-    status: "unread",
-  },
-];
 
 function formatDate(dateStr: string) {
   const date = new Date(dateStr);
@@ -135,12 +71,35 @@ function Toast({ msg }: { msg: string }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 const MessagesAdmin = () => {
-  const [messages, setMessages] = useState<Message[]>(SEED_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [selected, setSelected] = useState<Message | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const fetchMessages = async () => {
+    try {
+      setIsLoading(true);
+      const response = await messageApi.getMessages();
+      if (response.data?.success) {
+        setMessages(response.data.data);
+      } else {
+        setError("Failed to load messages.");
+      }
+    } catch (err: any) {
+      console.error(err);
+      setError("An error occurred while fetching messages.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // ── Derived ────────────────────────────────────────────────────────────────
   const filtered = messages.filter((m) => {
@@ -161,31 +120,164 @@ const MessagesAdmin = () => {
     setTimeout(() => setToast(null), 3000);
   }
 
-  function openMessage(msg: Message) {
+  async function openMessage(msg: Message) {
     // mark as read when opened
     if (msg.status === "unread") {
+      // Optimistic upate
       setMessages((prev) =>
         prev.map((m) => (m.id === msg.id ? { ...m, status: "read" } : m)),
       );
       setSelected({ ...msg, status: "read" });
+      
+      try {
+        await messageApi.updateStatus(msg.id, "read");
+      } catch (err) {
+        console.error("Failed to mark as read:", err);
+      }
     } else {
       setSelected(msg);
     }
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
+    // Optimistic update
     setMessages((prev) => prev.filter((m) => m.id !== id));
     if (selected?.id === id) setSelected(null);
     setDeleteConfirmId(null);
-    showToast("Message deleted.");
+    
+    try {
+      await messageApi.deleteMessage(id);
+      showToast("Message deleted.");
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   }
 
-  function markUnread(msg: Message) {
+  async function markUnread(msg: Message) {
+    // Optimistic update
     setMessages((prev) =>
       prev.map((m) => (m.id === msg.id ? { ...m, status: "unread" } : m)),
     );
     setSelected(null);
-    showToast("Marked as unread.");
+    
+    try {
+      await messageApi.updateStatus(msg.id, "unread");
+      showToast("Marked as unread.");
+    } catch (err) {
+      console.error("Mark unread failed:", err);
+    }
+  }
+
+  const renderMessageBody = (content: string) => {
+    if (content.includes("--- QUOTE REQUEST DETAILS ---")) {
+      // Parse the quote details
+      const lines = content.split("\n");
+      const details: Record<string, string> = {};
+      let description = "";
+      let descStarted = false;
+
+      lines.forEach((line) => {
+        if (line.includes("Company:")) details.company = line.replace("Company:", "").trim();
+        else if (line.includes("Project Type:")) details.type = line.replace("Project Type:", "").trim();
+        else if (line.includes("Budget Range:")) details.budget = line.replace("Budget Range:", "").trim();
+        else if (line.includes("Timeline:")) details.timeline = line.replace("Timeline:", "").trim();
+        else if (line.includes("Description:")) descStarted = true;
+        else if (descStarted) description += line + "\n";
+      });
+
+      return (
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#C89A3D]/10 flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-5 h-5 text-[#C89A3D]" />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold leading-none mb-1">Company</p>
+                <p className="text-sm font-bold text-gray-700">{details.company || "N/A"}</p>
+              </div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#C89A3D]/10 flex items-center justify-center flex-shrink-0">
+                <Briefcase className="w-5 h-5 text-[#C89A3D]" />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold leading-none mb-1">Project Type</p>
+                <p className="text-sm font-bold text-gray-700">{details.type || "N/A"}</p>
+              </div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#C89A3D]/10 flex items-center justify-center flex-shrink-0">
+                <IndianRupee className="w-5 h-5 text-[#C89A3D]" />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold leading-none mb-1">Budget Range</p>
+                <p className="text-sm font-bold text-gray-700">{details.budget || "N/A"}</p>
+              </div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#C89A3D]/10 flex items-center justify-center flex-shrink-0">
+                <Calendar className="w-5 h-5 text-[#C89A3D]" />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-gray-400 font-bold leading-none mb-1">Timeline</p>
+                <p className="text-sm font-bold text-gray-700">{details.timeline || "N/A"}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#C89A3D]/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none transition-all group-hover:bg-[#C89A3D]/10" />
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="w-4 h-4 text-[#C89A3D]" />
+              <span className="text-[10px] uppercase tracking-widest text-[#C89A3D] font-bold">Project Requirements</span>
+            </div>
+            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap relative z-10">
+              {description.trim() || "No description provided."}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-5 h-px bg-[#C89A3D]" />
+          <span className="text-[10px] uppercase tracking-widest text-[#C89A3D] font-semibold">
+            Message
+          </span>
+        </div>
+        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+          {content}
+        </p>
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex flex-col bg-gray-50 min-h-screen">
+        <AdminHeader title="Messages" subtitle="All incoming contact form messages" />
+        <div className="flex-1 flex items-center justify-center">
+          <span className="loading loading-spinner text-[#C89A3D] loading-lg"></span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex-1 flex flex-col bg-gray-50 min-h-screen">
+        <AdminHeader title="Messages" subtitle="All incoming contact form messages" />
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200">
+             <h3 className="font-bold">Error loading messages</h3>
+             <p>{error}</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -289,11 +381,18 @@ const MessagesAdmin = () => {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-0.5">
-                        <span
-                          className={`text-sm truncate ${msg.status === "unread" ? "font-bold text-gray-900" : "font-medium text-gray-700"}`}
-                        >
-                          {msg.name}
-                        </span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span
+                            className={`text-sm truncate ${msg.status === "unread" ? "font-bold text-gray-900" : "font-medium text-gray-700"}`}
+                          >
+                            {msg.name}
+                          </span>
+                          {msg.message.includes("--- QUOTE REQUEST DETAILS ---") && (
+                            <span className="flex-shrink-0 bg-[#C89A3D]/10 text-[#C89A3D] text-[8px] font-black px-1.5 py-0.5 rounded border border-[#C89A3D]/20 uppercase tracking-tighter">
+                              Quote
+                            </span>
+                          )}
+                        </div>
                         <span className="text-[10px] text-gray-400 flex-shrink-0">
                           {formatDate(msg.receivedAt)}
                         </span>
@@ -397,18 +496,8 @@ const MessagesAdmin = () => {
                   </div>
                 </div>
 
-                {/* Message bubble */}
-                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-5 h-px bg-[#C89A3D]" />
-                    <span className="text-[10px] uppercase tracking-widest text-[#C89A3D] font-semibold">
-                      Message
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    {selected.message}
-                  </p>
-                </div>
+                {/* Message Content (Auto-detects Quote or Regular) */}
+                {renderMessageBody(selected.message)}
 
                 {/* Reply hint */}
                 <div className="mt-4 p-4 bg-[#C89A3D]/5 border border-[#C89A3D]/15 rounded-2xl">

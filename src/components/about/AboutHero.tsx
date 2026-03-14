@@ -1,14 +1,9 @@
 import { useEffect, useRef } from "react";
 import { ArrowDown } from "lucide-react";
-
-const stats = [
-  { value: "1+", label: "Years of Excellence" },
-  { value: "2+", label: "Projects Delivered" },
-  { value: "8+", label: "Team Members" },
-  { value: "98%", label: "Client Satisfaction" },
-];
+import { usePublicStats } from "../../hooks/usePublicStats";
 
 const AboutHero = () => {
+  const { stats: siteStats } = usePublicStats();
   const labelRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const textRef = useRef<HTMLParagraphElement>(null);
@@ -142,7 +137,21 @@ const AboutHero = () => {
           className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
           style={fadeUp(460)}
         >
-          {stats.map((s, i) => (
+          {[
+            {
+              value: `${siteStats.yearsExperience}+`,
+              label: "Years of Excellence",
+            },
+            {
+              value: `${siteStats.projectsCompleted}+`,
+              label: "Projects Delivered",
+            },
+            { value: `${siteStats.teamMembersCount}+`, label: "Team Members" },
+            {
+              value: `${siteStats.satisfactionRate}%`,
+              label: "Client Satisfaction",
+            },
+          ].map((s, i) => (
             <div
               key={i}
               className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl px-4 py-5 hover:border-[#C89A3D]/40 hover:bg-white/8 transition-all duration-300"
@@ -164,12 +173,21 @@ const AboutHero = () => {
 
         {/* CTA buttons */}
         <div className="flex items-center justify-center gap-4 flex-wrap mt-10">
-          <button className="px-7 py-3 bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg hover:shadow-[#C89A3D]/30 hover:shadow-xl">
+          <button
+            onClick={() => {
+              const target = document.getElementById("our-story");
+              if (target) {
+                const top = target.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top, behavior: "smooth" });
+              }
+            }}
+            className="px-7 py-3 bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg hover:shadow-[#C89A3D]/30 hover:shadow-xl"
+          >
             Our Story
           </button>
-          <button className="px-7 py-3 bg-white/8 hover:bg-white/15 border border-white/20 text-white font-semibold rounded-xl text-sm transition-all duration-200 backdrop-blur-sm">
+          {/* <button className="px-7 py-3 bg-white/8 hover:bg-white/15 border border-white/20 text-white font-semibold rounded-xl text-sm transition-all duration-200 backdrop-blur-sm">
             Meet the Team
-          </button>
+          </button> */}
         </div>
       </div>
 

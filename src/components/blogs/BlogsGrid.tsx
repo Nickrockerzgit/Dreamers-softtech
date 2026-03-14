@@ -1,22 +1,70 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search } from "lucide-react";
-import { blogs } from "../../data/blogs";
 import BlogCard from "./BlogCard";
+import { useNavigate } from "react-router-dom";
+
+// ─── DB Blog type (matches backend schema) ────────────────────
+export interface DBBlog {
+  id: string;
+  title: string;
+  slug: string;
+  author: string;
+  category: string;
+  excerpt: string;
+  content: string;
+  coverImage: string | null;
+  status: string;
+  views: number;
+  readTime?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const BlogsGrid = () => {
+  const [allBlogs, setAllBlogs] = useState<DBBlog[]>([]);
+  const [fetchLoading, setFetchLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
+
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 4;
+  const navigate = useNavigate();
 
-  const sortedBlogs = useMemo(() => {
-    return [...blogs].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
+  // ── Fetch published blogs from backend ───────────────────────
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      setFetchLoading(true);
+      setFetchError("");
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs`);
+        const data = await res.json();
+        if (!res.ok) {
+          setFetchError("Failed to load blogs.");
+          return;
+        }
+        // Backend now handles filtering for "published" blogs for visitors
+        setAllBlogs(data.data);
+      } catch {
+        setFetchError("Could not connect to server.");
+      } finally {
+        setFetchLoading(false);
+      }
+    };
+    fetchBlogs();
   }, []);
+
+  // ── Sort by date descending ───────────────────────────────────
+  const sortedBlogs = useMemo(() => {
+    return [...allBlogs].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }, [allBlogs]);
 
   const latestBlogs = useMemo(() => sortedBlogs.slice(0, 3), [sortedBlogs]);
 
+  // ── Filter by search ─────────────────────────────────────────
   const filteredBlogs = useMemo(() => {
     const query = search.trim().toLowerCase();
     if (!query) return sortedBlogs;
@@ -35,6 +83,19 @@ const BlogsGrid = () => {
     const startIndex = (currentPage - 1) * blogsPerPage;
     return filteredBlogs.slice(startIndex, startIndex + blogsPerPage);
   }, [currentPage, filteredBlogs]);
+
+  // ── Categories from fetched data ──────────────────────────────
+  const categories = useMemo(() => {
+    return [...new Set(allBlogs.map((b) => b.category))];
+  }, [allBlogs]);
+
+  // ── Format date ──────────────────────────────────────────────
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
 
   const handleSearchSubmit = () => {
     setSearch(searchInput);
@@ -61,15 +122,36 @@ const BlogsGrid = () => {
     return [1, "...", currentPage, "...", totalPages];
   };
 
-  const categories = useMemo(() => {
-    return [...new Set(blogs.map((b) => b.category))];
-  }, []);
-
   const clearSearch = () => {
     setSearch("");
     setSearchInput("");
     setCurrentPage(1);
   };
+
+  // ── Loading state ────────────────────────────────────────────
+  if (fetchLoading) {
+    return (
+      <section className="pt-32 pb-20 bg-gray-50 min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-2 border-[#C89A3D] border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-400 font-medium">Loading blogs...</p>
+        </div>
+      </section>
+    );
+  }
+
+  // ── Error state ──────────────────────────────────────────────
+  if (fetchError) {
+    return (
+      <section className="pt-32 pb-20 bg-gray-50 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-5xl mb-4">⚠️</p>
+          <p className="text-gray-700 font-semibold">{fetchError}</p>
+          <p className="text-gray-400 text-sm mt-1">Please try again later.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="pt-32 pb-20 bg-gray-50 min-h-screen text-gray-900">
@@ -92,25 +174,31 @@ const BlogsGrid = () => {
 
               <div className="space-y-4">
                 {latestBlogs.map((blog, index) => (
-                  <div key={blog.id}>
+                  <div
+                    key={blog.id}
+                    onClick={() => navigate(`/blogs/${blog.slug}`)}
+                  >
                     <div className="flex gap-3 group cursor-pointer">
-                      <div className="w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden">
-                        <img
-                          src={blog.imageSmall}
-                          alt={blog.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                        />
+                      {/* thumbnail — use coverImage or fallback placeholder */}
+                      <div className="w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden bg-[#C89A3D]/10 flex items-center justify-center">
+                        {blog.coverImage ? (
+                          <img
+                            src={blog.coverImage}
+                            alt={blog.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                          />
+                        ) : (
+                          <span className="text-[#C89A3D] text-xs font-bold uppercase">
+                            {blog.category?.charAt(0)}
+                          </span>
+                        )}
                       </div>
                       <div className="flex flex-col justify-center">
                         <p className="text-xs font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-[#C89A3D] transition-colors duration-200">
                           {blog.excerpt.split(" ").slice(0, 7).join(" ")}...
                         </p>
                         <p className="mt-1 text-[10px] text-gray-400">
-                          {new Date(blog.date).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
+                          {formatDate(blog.createdAt)}
                         </p>
                       </div>
                     </div>
@@ -226,7 +314,6 @@ const BlogsGrid = () => {
                     >
                       «
                     </button>
-
                     {getPaginationPages().map((page, idx) =>
                       page === "..." ? (
                         <span
@@ -250,7 +337,6 @@ const BlogsGrid = () => {
                         </button>
                       ),
                     )}
-
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}

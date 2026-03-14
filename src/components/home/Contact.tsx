@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Mail, Phone, MapPin, Send, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import emailjs from "@emailjs/browser";
+import { messageApi } from "../../api/messageApi";
+
+// ─── PASTE YOUR KEYS HERE ─────────────────────────────────────────────────────
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+// ─────────────────────────────────────────────────────────────────────────────
 
 const contactInfo = [
   {
@@ -29,6 +37,8 @@ const hours = [
   { day: "Sunday", time: "Closed" },
 ];
 
+type Status = "idle" | "loading" | "success" | "error";
+
 const Contact = () => {
   const formRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
@@ -40,6 +50,9 @@ const Contact = () => {
     phone: "",
     message: "",
   });
+  
+  const [status, setStatus] = useState<Status>("idle");
+  const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
     const els = [
@@ -66,9 +79,58 @@ const Contact = () => {
     });
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Form submitted! (Backend integration pending)");
+
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setErrMsg("Please fill in all required fields.");
+      setStatus("error");
+      return;
+    }
+
+    setStatus("loading");
+    setErrMsg("");
+
+    try {
+      // 1. Send Email via EmailJS
+      if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY) {
+        await emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_TEMPLATE_ID,
+          {
+            name: formData.name.trim(),
+            email: formData.email,
+            phone: formData.phone || "Not provided",
+            subject: "Home Page Contact Form Submission", 
+            message: formData.message,
+          },
+          EMAILJS_PUBLIC_KEY,
+        );
+      } else {
+        console.warn("EmailJS credentials not configured.");
+      }
+
+      // 2. Save log to Backend Database for Admin Dashboard
+      try {
+        await messageApi.createMessage({
+          name: formData.name.trim(),
+          email: formData.email,
+          phone: formData.phone || "Not provided",
+          subject: "Home Page Contact Form Submission",
+          message: formData.message,
+        });
+      } catch (dbErr) {
+        console.error("Database save error (non-fatal):", dbErr);
+      }
+
+      setStatus("success");
+      setFormData({ name: "", email: "", phone: "", message: "" });
+      setTimeout(() => setStatus("idle"), 5000);
+    } catch (err) {
+      console.error("Submission error:", err);
+      setStatus("error");
+      setErrMsg("Something went wrong. Please try again.");
+    }
   };
 
   const handleChange = (
@@ -133,78 +195,107 @@ const Contact = () => {
                 We'll get back to you within 24 hours.
               </p>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                  <label htmlFor="name" className={labelClass}>
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    placeholder="John Doe"
-                    className={inputClass}
-                  />
+              {status === "success" ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-[#C89A3D]/10 border border-[#C89A3D]/20 flex items-center justify-center mb-4">
+                    <CheckCircle2 className="w-8 h-8 text-[#C89A3D]" />
+                  </div>
+                  <h4 className="text-gray-900 font-bold text-lg mb-2">
+                    Message Sent!
+                  </h4>
+                  <p className="text-gray-500 text-sm">
+                    Thanks for reaching out. We'll get back to you within 24
+                    hours.
+                  </p>
                 </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  {status === "error" && errMsg && (
+                    <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm">
+                      <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                      {errMsg}
+                    </div>
+                  )}
+                  
+                  <div>
+                    <label htmlFor="name" className={labelClass}>
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="John Doe"
+                      className={inputClass}
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="email" className={labelClass}>
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="john@example.com"
-                    className={inputClass}
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="email" className={labelClass}>
+                      Email Address *
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="john@example.com"
+                      className={inputClass}
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="phone" className={labelClass}>
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+91 98765 43210"
-                    className={inputClass}
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="phone" className={labelClass}>
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="+91 98765 43210"
+                      className={inputClass}
+                    />
+                  </div>
 
-                <div>
-                  <label htmlFor="message" className={labelClass}>
-                    Your Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                    placeholder="Tell us about your project..."
-                    className={`${inputClass} resize-none`}
-                  />
-                </div>
+                  <div>
+                    <label htmlFor="message" className={labelClass}>
+                      Your Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      rows={5}
+                      placeholder="Tell us about your project..."
+                      className={`${inputClass} resize-none`}
+                    />
+                  </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-3.5 bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow hover:shadow-lg hover:shadow-[#C89A3D]/25 flex items-center justify-center gap-2 group"
-                >
-                  Send Message
-                  <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={status === "loading"}
+                    className="w-full py-3.5 bg-[#C89A3D] hover:bg-[#b78930] disabled:opacity-70 disabled:hover:bg-[#C89A3D] disabled:cursor-not-allowed text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow hover:shadow-lg hover:shadow-[#C89A3D]/25 flex items-center justify-center gap-2 group"
+                  >
+                    {status === "loading" ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send Message
+                        <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
 

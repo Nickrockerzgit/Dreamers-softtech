@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const journeyData = [
   {
@@ -35,6 +36,7 @@ const AboutJourney = () => {
   const headingRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<HTMLDivElement[]>([]);
   const lineRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -178,7 +180,7 @@ const AboutJourney = () => {
             transition: `opacity 0.8s cubic-bezier(0.4,0,0.2,1) ${journeyData.length * 150}ms, transform 0.8s cubic-bezier(0.4,0,0.2,1) ${journeyData.length * 150}ms`,
           }}
         >
-          <button className="px-8 py-3 border-2 border-[#C89A3D] text-[#C89A3D] rounded-full font-semibold text-sm hover:bg-[#C89A3D] hover:text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#C89A3D]/25">
+          <button onClick={() => navigate('/contact')} className="px-8 py-3 border-2 border-[#C89A3D] text-[#C89A3D] rounded-full font-semibold text-sm hover:bg-[#C89A3D] hover:text-white transition-all duration-300 hover:shadow-lg hover:shadow-[#C89A3D]/25">
             Contact Us →
           </button>
         </div>

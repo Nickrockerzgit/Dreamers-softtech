@@ -1,21 +1,35 @@
+import { useNavigate } from "react-router-dom";
 import { ArrowRight, Clock, User } from "lucide-react";
-import { Blog } from "../../data/blogs";
+import { DBBlog } from "./BlogsGrid";
 
 interface Props {
-  blog: Blog;
+  blog: DBBlog;
 }
 
 const BlogCard = ({ blog }: Props) => {
+  const navigate = useNavigate();
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#C89A3D]/20 transition-all duration-400 flex flex-col cursor-pointer">
+    <div
+      onClick={() => navigate(`/blogs/${blog.slug}`)}
+      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:border-[#C89A3D]/20 transition-all duration-400 flex flex-col cursor-pointer"
+    >
       {/* Image */}
-      <div className="relative h-52 overflow-hidden">
-        <img
-          src={blog.image}
-          alt={blog.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-        />
-        {/* Category pill over image */}
+      <div className="relative h-52 overflow-hidden bg-[#C89A3D]/5 flex items-center justify-center">
+        {blog.coverImage ? (
+          <img
+            src={blog.coverImage}
+            alt={blog.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          />
+        ) : (
+          // fallback when no cover image
+          <div className="w-full h-full bg-gradient-to-br from-[#C89A3D]/10 to-[#C89A3D]/5 flex items-center justify-center">
+            <span className="text-4xl font-extrabold text-[#C89A3D]/20 uppercase">
+              {blog.category?.charAt(0)}
+            </span>
+          </div>
+        )}
+        {/* Category pill */}
         <span className="absolute top-3 left-3 bg-[#C89A3D] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
           {blog.category}
         </span>
@@ -43,10 +57,12 @@ const BlogCard = ({ blog }: Props) => {
               <User className="w-3 h-3" />
               {blog.author}
             </span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {blog.readTime}
-            </span>
+            {blog.readTime && (
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {blog.readTime}
+              </span>
+            )}
           </div>
 
           {/* Read more */}

@@ -53,7 +53,7 @@ const AboutMissionVision = () => {
   }, []);
 
   return (
-    <section className="bg-white py-28 overflow-hidden">
+    <section id="our-story" className="bg-white py-28 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div

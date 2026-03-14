@@ -134,7 +134,7 @@ const ServicesSection = () => {
   }, []);
 
   return (
-    <section className="bg-gray-50 py-28 overflow-hidden">
+    <section id="service-section" className="bg-gray-50 py-28 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div

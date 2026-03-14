@@ -138,27 +138,30 @@ const BlogTable = ({
             </button>
 
             {/* Actions */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 relative z-10">
               <button
-                onClick={() => onView(post)}
+                type="button"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onView(post); }}
                 title="View"
-                className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:border-gray-200 transition-all duration-150"
+                className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:border-gray-200 transition-all duration-150 cursor-pointer pointer-events-auto"
               >
-                <Eye className="w-3.5 h-3.5" />
+                <Eye className="w-3.5 h-3.5 pointer-events-none" />
               </button>
               <button
-                onClick={() => onEdit(post)}
+                type="button"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEdit(post); }}
                 title="Edit"
-                className="w-7 h-7 rounded-lg bg-[#C89A3D]/8 border border-[#C89A3D]/15 flex items-center justify-center text-[#C89A3D] hover:bg-[#C89A3D]/15 transition-all duration-150"
+                className="w-7 h-7 rounded-lg bg-[#C89A3D]/8 border border-[#C89A3D]/15 flex items-center justify-center text-[#C89A3D] hover:bg-[#C89A3D]/15 transition-all duration-150 cursor-pointer pointer-events-auto"
               >
-                <Pencil className="w-3.5 h-3.5" />
+                <Pencil className="w-3.5 h-3.5 pointer-events-none" />
               </button>
               <button
-                onClick={() => onDelete(post.id)}
+                type="button"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(post.id); }}
                 title="Delete"
-                className="w-7 h-7 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center text-red-400 hover:bg-red-100 transition-all duration-150"
+                className="w-7 h-7 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center text-red-400 hover:bg-red-100 transition-all duration-150 cursor-pointer pointer-events-auto"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-3.5 h-3.5 pointer-events-none" />
               </button>
             </div>
           </div>

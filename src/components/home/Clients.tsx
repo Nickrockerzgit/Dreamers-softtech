@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-import client1 from "../../assets/clients/clients1.png";
-import client2 from "../../assets/clients/clients2.png";
-import client3 from "../../assets/clients/clients3.png";
+import client1 from "../../assets/clients/clients1-removebg-preview.png";
+import client2 from "../../assets/clients/clients2-removebg-preview.png";
+import client3 from "../../assets/clients/clients3-removebg-preview.png";
 
 const clientImages = [
   { img: client1, name: "Bharat Diesel Service" },
@@ -124,7 +124,7 @@ const Clients = () => {
               <img
                 src={client.img}
                 alt={client.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 style={{
                   filter:
                     hoveredIdx === idx

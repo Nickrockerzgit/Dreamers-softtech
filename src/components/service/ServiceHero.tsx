@@ -1,14 +1,28 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDown } from "lucide-react";
-
-const stats = [
-  { value: "2+", label: "Services Offered" },
-  { value: "2+", label: "Projects Delivered" },
-  { value: "10+", label: "Technologies" },
-  { value: "98%", label: "Client Satisfaction" },
-];
+import { usePublicStats } from "../../hooks/usePublicStats";
+import { useSearchParams } from "react-router-dom";
+import { proposalApi } from "../../api/proposalApi";
+import QuoteModal from "./QuoteModal";
+import QuoteConfirmModal from "./QuoteConfirmModal";
+import Toast from "../../admin/components/Toast";
 
 const ServiceHero = () => {
+  const { stats: siteStats } = usePublicStats();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [activeToken, setActiveToken] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+  
+  const [magicData, setMagicData] = useState({
+    name: "",
+    email: "",
+    project: "",
+    company: "",
+  });
+
   const labelRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const dividerRef = useRef<HTMLDivElement>(null);
@@ -17,6 +31,33 @@ const ServiceHero = () => {
   const arrowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // ── Check for Token-based Magic Link ──
+    const quoteToken = searchParams.get("quote_token");
+
+    if (quoteToken) {
+      setActiveToken(quoteToken);
+      const verifyToken = async () => {
+        try {
+          const res = await proposalApi.verifyToken(quoteToken);
+          if (res.data.success) {
+            const p = res.data.data;
+            setMagicData({
+              name: p.fullName,
+              email: p.email,
+              project: p.projectType,
+              company: p.company || "",
+            });
+            setIsConfirmModalOpen(true);
+          }
+        } catch (err) {
+          console.error("Token verification failed:", err);
+        } finally {
+          setSearchParams({}, { replace: true });
+        }
+      };
+      verifyToken();
+    }
+
     const els = [
       { el: labelRef.current, delay: 0 },
       { el: headingRef.current, delay: 100 },
@@ -33,7 +74,7 @@ const ServiceHero = () => {
         el.style.transform = "translateY(0)";
       }, delay);
     });
-  }, []);
+  }, [searchParams, setSearchParams]);
 
   const fadeUp = (delay = 0): React.CSSProperties => ({
     opacity: 0,
@@ -139,7 +180,18 @@ const ServiceHero = () => {
           className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
           style={fadeUp(460)}
         >
-          {stats.map((s, i) => (
+          {[
+            {
+              value: `${siteStats.projectsCompleted}+`,
+              label: "Projects Delivered",
+            },
+            {
+              value: `${siteStats.satisfactionRate}%`,
+              label: "Client Satisfaction",
+            },
+            { value: `${siteStats.technologiesCount}+`, label: "Technologies" },
+            { value: `${siteStats.happyClients}+`, label: "Happy Clients" },
+          ].map((s, i) => (
             <div
               key={i}
               className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl px-4 py-5 hover:border-[#C89A3D]/40 hover:bg-white/8 transition-all duration-300"
@@ -161,10 +213,22 @@ const ServiceHero = () => {
 
         {/* CTA buttons */}
         <div className="flex items-center justify-center gap-4 flex-wrap mt-10">
-          <button className="px-7 py-3 bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg hover:shadow-[#C89A3D]/30 hover:shadow-xl">
+          <button
+            onClick={() => {
+              const target = document.getElementById("service-section");
+              if (target) {
+                const top = target.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top, behavior: "smooth" });
+              }
+            }}
+            className="px-7 py-3 bg-[#C89A3D] hover:bg-[#b78930] text-white font-semibold rounded-xl text-sm transition-all duration-200 shadow-lg hover:shadow-[#C89A3D]/30 hover:shadow-xl"
+          >
             Explore Services
           </button>
-          <button className="px-7 py-3 bg-white/8 hover:bg-white/15 border border-white/20 text-white font-semibold rounded-xl text-sm transition-all duration-200 backdrop-blur-sm">
+          <button
+            onClick={() => setIsQuoteModalOpen(true)}
+            className="px-7 py-3 bg-white/8 hover:bg-white/15 border border-white/20 text-white font-semibold rounded-xl text-sm transition-all duration-200 backdrop-blur-sm"
+          >
             Get a Quote
           </button>
         </div>
@@ -184,6 +248,47 @@ const ServiceHero = () => {
           style={{ animation: "bounce 2s infinite" }}
         />
       </div>
+
+      <QuoteModal
+        isOpen={isQuoteModalOpen}
+        onClose={() => setIsQuoteModalOpen(false)}
+        initialData={magicData.name ? {
+            fullName: magicData.name,
+            email: magicData.email,
+            projectType: magicData.project,
+            company: magicData.company,
+        } : undefined}
+      />
+
+      <QuoteConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={async () => {
+            if (activeToken) {
+                try {
+                    await proposalApi.reject(activeToken);
+                    setToast({ msg: "Proposal dismissed successfully.", type: "error" });
+                } catch (err) {
+                    console.error("Auto-rejection failed:", err);
+                }
+            }
+            setIsConfirmModalOpen(false);
+            setTimeout(() => setToast(null), 4000);
+        }}
+        data={magicData}
+        onConfirm={async () => {
+            if (activeToken) {
+                try {
+                    await proposalApi.confirm(activeToken);
+                } catch (err) {
+                    console.error("Auto-confirmation failed:", err);
+                }
+            }
+            setIsConfirmModalOpen(false);
+            setIsQuoteModalOpen(true);
+        }}
+      />
+
+      {toast && <Toast msg={toast.msg} type={toast.type} />}
 
       <style>{`
         @keyframes bounce {

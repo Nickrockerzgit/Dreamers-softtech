@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -8,19 +8,62 @@ import {
   ChevronLeft,
   ChevronRight,
   Mail,
+  Users,
+  BarChart2,
+  MessageSquareQuote,
 } from "lucide-react";
+
+import { useAuth } from "../../context/AuthContext";
+import { messageApi } from "../../api/messageApi";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", to: "/admin" },
-  { icon: FileText, label: "Blog Posts", to: "/admin/blogs" },
+  { icon: FileText, label: "Blogs", to: "/admin/blogs" },
+  { icon: FileText, label: "Proposals", to: "/admin/proposals" },
   { icon: Briefcase, label: "Portfolio", to: "/admin/portfolio" },
+
   { icon: Mail, label: "Messages", to: "/admin/messages" },
+  { icon: BarChart2, label: "Site Overview", to: "/admin/overview" },
+  { icon: MessageSquareQuote, label: "Create Quote", to: "/admin/create-quote" },
   { icon: Settings, label: "Settings", to: "/admin/settings" },
+  {
+    icon: MessageSquareQuote,
+    label: "Testimonials",
+    to: "/admin/testimonials",
+  },
+  {
+    icon: Users,
+    label: "Admin Requests",
+    to: "/admin/requests",
+    superadminOnly: true,
+  },
 ];
 
 const AdminSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
+  const { admin } = useAuth(); // ← ADD (import useAuth at top)
+
+  // Fetch unread count on mount and when navigating
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await messageApi.getUnreadCount();
+        if (res.data.success) {
+          setUnreadCount(res.data.data.count);
+        }
+      } catch (err) {
+        console.error("Failed to fetch unread count:", err);
+      }
+    };
+
+    fetchUnreadCount();
+
+    // Poll every 30 seconds
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, [location.pathname]);
 
   return (
     <aside
@@ -51,14 +94,20 @@ const AdminSidebar = () => {
 
       {/* Nav */}
       <nav className="flex-1 py-4 space-y-0.5 px-2">
-        {navItems.map(({ icon: Icon, label, to }) => {
-          const active = location.pathname === to;
-          return (
-            <Link
-              key={to}
-              to={to}
-              className={`
-                flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+        {navItems
+          .filter(
+            (item) => !item.superadminOnly || admin?.role === "superadmin",
+          )
+          .map(({ icon: Icon, label, to }) => {
+            const active = location.pathname === to;
+            const isMessages = label === "Messages";
+
+            return (
+              <Link
+                key={to}
+                to={to}
+                className={`
+                relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
                 transition-all duration-200 group
                 ${
                   active
@@ -67,14 +116,29 @@ const AdminSidebar = () => {
                 }
                 ${collapsed ? "justify-center" : ""}
               `}
-            >
-              <Icon
-                className={`w-4 h-4 flex-shrink-0 ${active ? "text-[#C89A3D]" : "text-gray-400 group-hover:text-gray-600"}`}
-              />
-              {!collapsed && <span>{label}</span>}
-            </Link>
-          );
-        })}
+              >
+                <div className="relative flex-shrink-0">
+                  <Icon
+                    className={`w-4 h-4 ${active ? "text-[#C89A3D]" : "text-gray-400 group-hover:text-gray-600"}`}
+                  />
+                  {isMessages && unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#C89A3D] border border-white" />
+                  )}
+                </div>
+
+                {!collapsed && (
+                  <span className="flex-1 flex items-center justify-between">
+                    {label}
+                    {isMessages && unreadCount > 0 && (
+                      <span className="text-[10px] font-bold bg-[#C89A3D] text-white px-1.5 py-0.5 rounded-md">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
       </nav>
 
       {/* Collapse toggle */}

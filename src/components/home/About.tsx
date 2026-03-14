@@ -3,13 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import aboutBg from "../../assets/about-bg.png";
 import aboutBg2 from "../../assets/about-bg2.png";
-
-const stats = [
-  { value: "2+", label: "Projects Delivered" },
-  { value: "2+", label: "Happy Clients" },
-  { value: "1+", label: "Years Experience" },
-  { value: "98%", label: "Satisfaction Rate" },
-];
+import { usePublicStats } from "../../hooks/usePublicStats";
 
 const highlights = [
   "Custom software tailored to your business needs",
@@ -19,17 +13,19 @@ const highlights = [
 ];
 
 const About = () => {
+  const { stats } = usePublicStats();
+
   const contentRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const els = [
-      { el: contentRef.current, x: "-32px" },
-      { el: imageRef.current, x: "32px" },
+      { el: contentRef.current },
+      { el: imageRef.current },
     ];
 
-    els.forEach(({ el, x }) => {
+    els.forEach(({ el }) => {
       if (!el) return;
       const observer = new IntersectionObserver(
         ([entry]) => {
@@ -58,6 +54,13 @@ const About = () => {
       observer.observe(statsRef.current);
     }
   }, []);
+
+  const statCards = [
+    { value: `${stats.projectsCompleted}+`, label: "Projects Delivered" },
+    { value: `${stats.happyClients}+`, label: "Happy Clients" },
+    { value: `${stats.yearsExperience}+`, label: "Years Experience" },
+    { value: `${stats.satisfactionRate}%`, label: "Satisfaction Rate" },
+  ];
 
   return (
     <section id="about" className="relative py-28 overflow-hidden">
@@ -145,7 +148,7 @@ const About = () => {
             {/* Floating experience badge */}
             <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-xl px-5 py-4 border border-gray-100">
               <p className="text-3xl font-extrabold text-[#C89A3D] leading-none">
-                1+
+                {stats.yearsExperience}+
               </p>
               <p className="text-xs text-gray-500 mt-1 font-medium">
                 Years of
@@ -156,7 +159,7 @@ const About = () => {
 
             {/* Floating projects badge */}
             <div className="absolute -top-5 -right-5 bg-[#C89A3D] rounded-2xl shadow-xl px-5 py-4 text-white">
-              <p className="text-3xl font-extrabold leading-none">2+</p>
+              <p className="text-3xl font-extrabold leading-none">{stats.projectsCompleted}+</p>
               <p className="text-xs opacity-80 mt-1 font-medium">
                 Projects
                 <br />
@@ -180,7 +183,7 @@ const About = () => {
               "opacity 0.9s cubic-bezier(0.4,0,0.2,1) 300ms, transform 0.9s cubic-bezier(0.4,0,0.2,1) 300ms",
           }}
         >
-          {stats.map((s, i) => (
+          {statCards.map((s, i) => (
             <div
               key={i}
               className="bg-white rounded-2xl border border-gray-100 px-6 py-6 shadow-sm hover:shadow-md hover:border-[#C89A3D]/20 transition-all duration-300 text-center group"

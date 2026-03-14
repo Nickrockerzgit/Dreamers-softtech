@@ -7,43 +7,48 @@ import {
   Headphones,
   Trophy,
 } from "lucide-react";
+import { usePublicStats } from "../../hooks/usePublicStats";
 
-const data = [
-  {
-    icon: Calendar,
-    title: "Founded in 2025",
-    desc: "Dreamers Softtech delivers innovative IT solutions across industries with a passion for excellence.",
-  },
-  {
-    icon: MapPin,
-    title: "Our Location",
-    desc: "Headquartered in Indore, serving clients across regions.",
-  },
-  {
-    icon: BadgeCheck,
-    title: "Certifications",
-    desc: "Globally recognized standards achieved — quality and compliance at every step.",
-  },
-  {
-    icon: Rocket,
-    title: "2+ Projects",
-    desc: "Successfully delivered projects across diverse industries and global markets.",
-  },
-  {
-    icon: Headphones,
-    title: "Our Expertise",
-    desc: "Delivering expert solutions in Web Development, App Development, UI/UX Design, AI/ML, and Deployment Services..",
-  },
-  {
-    icon: Trophy,
-    title: "Recognition",
-    desc: "Renowned for delivering award-winning IT solutions that make a measurable impact.",
-  },
-];
+
+
 
 const AboutOverview = () => {
+  const { stats } = usePublicStats();
   const headingRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<HTMLDivElement[]>([]);
+
+  const data = [
+    {
+      icon: Calendar,
+      title: "Founded in 2025",
+      desc: "Dreamers Softtech delivers innovative IT solutions across industries with a passion for excellence.",
+    },
+    {
+      icon: MapPin,
+      title: "Our Location",
+      desc: "Headquartered in Indore, serving clients across regions.",
+    },
+    {
+      icon: BadgeCheck,
+      title: "Certifications",
+      desc: "Globally recognized standards achieved — quality and compliance at every step.",
+    },
+    {
+      icon: Rocket,
+      title: `${stats.projectsCompleted}+ Projects`,
+      desc: "Successfully delivered projects across diverse industries and global markets.",
+    },
+    {
+      icon: Headphones,
+      title: "Our Expertise",
+      desc: "Delivering expert solutions in Web Development, App Development, UI/UX Design, AI/ML, and Deployment Services.",
+    },
+    {
+      icon: Trophy,
+      title: "Recognition",
+      desc: "Renowned for delivering award-winning IT solutions that make a measurable impact.",
+    },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
