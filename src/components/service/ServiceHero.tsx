@@ -182,15 +182,15 @@ const ServiceHero = () => {
         >
           {[
             {
-              value: `${siteStats.projectsCompleted}+`,
+              value: `${siteStats?.projectsCompleted || 0}+`,
               label: "Projects Delivered",
             },
             {
-              value: `${siteStats.satisfactionRate}%`,
+              value: `${siteStats?.satisfactionRate || 98}%`,
               label: "Client Satisfaction",
             },
-            { value: `${siteStats.technologiesCount}+`, label: "Technologies" },
-            { value: `${siteStats.happyClients}+`, label: "Happy Clients" },
+            { value: `${siteStats?.technologiesCount || 0}+`, label: "Technologies" },
+            { value: `${siteStats?.happyClients || 0}+`, label: "Happy Clients" },
           ].map((s, i) => (
             <div
               key={i}

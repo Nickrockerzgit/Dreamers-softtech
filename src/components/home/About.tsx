@@ -56,10 +56,10 @@ const About = () => {
   }, []);
 
   const statCards = [
-    { value: `${stats.projectsCompleted}+`, label: "Projects Delivered" },
-    { value: `${stats.happyClients}+`, label: "Happy Clients" },
-    { value: `${stats.yearsExperience}+`, label: "Years Experience" },
-    { value: `${stats.satisfactionRate}%`, label: "Satisfaction Rate" },
+    { value: `${stats?.projectsCompleted || 0}+`, label: "Projects Delivered" },
+    { value: `${stats?.happyClients || 0}+`, label: "Happy Clients" },
+    { value: `${stats?.yearsExperience || 1}+`, label: "Years Experience" },
+    { value: `${stats?.satisfactionRate || 98}%`, label: "Satisfaction Rate" },
   ];
 
   return (
@@ -148,7 +148,7 @@ const About = () => {
             {/* Floating experience badge */}
             <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl shadow-xl px-5 py-4 border border-gray-100">
               <p className="text-3xl font-extrabold text-[#C89A3D] leading-none">
-                {stats.yearsExperience}+
+                {stats?.yearsExperience || 1}+
               </p>
               <p className="text-xs text-gray-500 mt-1 font-medium">
                 Years of
@@ -159,7 +159,7 @@ const About = () => {
 
             {/* Floating projects badge */}
             <div className="absolute -top-5 -right-5 bg-[#C89A3D] rounded-2xl shadow-xl px-5 py-4 text-white">
-              <p className="text-3xl font-extrabold leading-none">{stats.projectsCompleted}+</p>
+              <p className="text-3xl font-extrabold leading-none">{stats?.projectsCompleted || 0}+</p>
               <p className="text-xs opacity-80 mt-1 font-medium">
                 Projects
                 <br />

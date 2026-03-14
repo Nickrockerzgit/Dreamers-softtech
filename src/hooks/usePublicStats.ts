@@ -42,7 +42,7 @@ const fetchStats = (): Promise<SiteStats> => {
 };
 
 export const usePublicStats = () => {
-  const [stats, setStats] = useState<SiteStats>(cachedStats ?? DEFAULT_STATS);
+  const [stats, setStats] = useState<SiteStats>(cachedStats || DEFAULT_STATS);
   const [loading, setLoading] = useState(!cachedStats);
 
   useEffect(() => {
@@ -52,10 +52,10 @@ export const usePublicStats = () => {
       return;
     }
     fetchStats().then((s) => {
-      setStats(s);
+      setStats(s || DEFAULT_STATS);
       setLoading(false);
     });
   }, []);
 
-  return { stats, loading };
+  return { stats: stats || DEFAULT_STATS, loading };
 };

@@ -112,9 +112,9 @@ const PortfolioHero = () => {
           }}
         >
           {[
-            { value: `${siteStats.projectsCompleted}+`, label: "Projects" },
-            { value: `${siteStats.satisfactionRate}%`, label: "Satisfaction" },
-            { value: `${siteStats.yearsExperience}+`, label: "Years" },
+            { value: `${siteStats?.projectsCompleted || 0}+`, label: "Projects" },
+            { value: `${siteStats?.satisfactionRate || 98}%`, label: "Satisfaction" },
+            { value: `${siteStats?.yearsExperience || 1}+`, label: "Years" },
           ].map((s, i) => (
             <div key={i} className="text-center">
               <p className="text-3xl font-extrabold text-[#C89A3D]">

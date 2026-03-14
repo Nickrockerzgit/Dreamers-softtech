@@ -200,18 +200,18 @@ const Portfolio = () => {
             <div className="grid grid-cols-2 gap-4 mb-8">
               {[
                 {
-                  value: `${stats.projectsCompleted}+`,
+                  value: `${stats?.projectsCompleted || 0}+`,
                   label: "Projects Delivered",
                 },
                 {
-                  value: `${stats.satisfactionRate}%`,
+                  value: `${stats?.satisfactionRate || 98}%`,
                   label: "Client Satisfaction",
                 },
                 {
-                  value: `${stats.yearsExperience}+`,
+                  value: `${stats?.yearsExperience || 1}+`,
                   label: "Years Experience",
                 },
-                { value: `${stats.teamMembersCount}+`, label: "Team Members" },
+                { value: `${stats?.teamMembersCount || 0}+`, label: "Team Members" },
               ].map((stat) => (
                 <div
                   key={stat.label}

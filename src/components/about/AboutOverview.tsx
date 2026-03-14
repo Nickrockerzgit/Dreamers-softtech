@@ -35,7 +35,7 @@ const AboutOverview = () => {
     },
     {
       icon: Rocket,
-      title: `${stats.projectsCompleted}+ Projects`,
+      title: `${stats?.projectsCompleted || 0}+ Projects`,
       desc: "Successfully delivered projects across diverse industries and global markets.",
     },
     {

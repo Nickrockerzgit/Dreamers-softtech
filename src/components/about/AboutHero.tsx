@@ -139,16 +139,16 @@ const AboutHero = () => {
         >
           {[
             {
-              value: `${siteStats.yearsExperience}+`,
+              value: `${siteStats?.yearsExperience || 1}+`,
               label: "Years of Excellence",
             },
             {
-              value: `${siteStats.projectsCompleted}+`,
+              value: `${siteStats?.projectsCompleted || 0}+`,
               label: "Projects Delivered",
             },
-            { value: `${siteStats.teamMembersCount}+`, label: "Team Members" },
+            { value: `${siteStats?.teamMembersCount || 0}+`, label: "Team Members" },
             {
-              value: `${siteStats.satisfactionRate}%`,
+              value: `${siteStats?.satisfactionRate || 98}%`,
               label: "Client Satisfaction",
             },
           ].map((s, i) => (
