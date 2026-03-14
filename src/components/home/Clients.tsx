@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import client1 from "../../assets/clients/clients1-removebg-preview.png";
 import client2 from "../../assets/clients/clients2-removebg-preview.png";
-import client3 from "../../assets/clients/clients3-removebg-preview.png";
+import client3 from "../../assets/clients/client3.png";
 
 const clientImages = [
   { img: client1, name: "Bharat Diesel Service" },
